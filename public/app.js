@@ -54,6 +54,10 @@ const T = {
     paidThanks: 'Спасибо! Официант подтвердит оплату.', rateH: 'Как вам у нас?', rateP: 'Оцените визит — это займёт 5 секунд',
     rateHi: 'Рахмет! Мы очень рады 🤍', rateHiP: 'Поделитесь впечатлением в 2ГИС — это очень помогает нам расти.', rateGis: 'Написать отзыв в 2ГИС',
     rateLo: 'Нам жаль, что что-то пошло не так', rateLoP: 'Расскажите, что улучшить — сообщение получит управляющий лично.', rateSend: 'Отправить управляющему',
+    netErr: 'Ошибка сети, попробуйте ещё раз', scanH: 'Отсканируйте QR на столе', scanP: 'Чтобы заказать или позвать официанта, наведите камеру телефона на QR-код на вашем столе. Меню можно смотреть и так.',
+    commentPh: 'Без лука, острее, подать всё сразу…', okTable: 'Официант подтвердит заказ в течение пары минут. Статус видно в «Мои заказы».', okWeb: 'Мы перезвоним для подтверждения. Статус можно смотреть здесь же.',
+    receiver: 'Получатель', optional: 'по желанию', bkEventPh: 'Оформление, торт, музыка, детский стол…', bkTablePh: 'У окна, детский стул, тихий столик…', preorderPh: 'Бешбармак на 10, плов ханский 2,5 кг, шашлыки…',
+    needNamePhone: 'Укажите имя и телефон', added: 'Добавлено в корзину', addHint: 'Добавляйте блюда кнопкой «+»',
     thanks: 'Спасибо!', close: 'Закрыть', min: 'Минимальная сумма доставки', stopErr: 'Нет в наличии',
     features: [['3', 'VIP-зала', 'На 25, 15 и 10 гостей + общий зал на 60 мест'], ['12–24', 'каждый день', 'Обеды, ужины и поздние встречи'], ['4.8★', 'в 2ГИС', 'Более 280 оценок гостей'], ['🧸', 'Детская зона', 'Игровая для маленьких гостей']],
   },
@@ -91,6 +95,10 @@ const T = {
     paidThanks: 'Рахмет! Даяшы төлемді растайды.', rateH: 'Бізде ұнады ма?', rateP: 'Сапарыңызды бағалаңыз',
     rateHi: 'Рахмет! Біз өте қуаныштымыз 🤍', rateHiP: '2ГИС-те пікір қалдырыңыз — бұл бізге көп көмектеседі.', rateGis: '2ГИС-те пікір жазу',
     rateLo: 'Бірдеңе дұрыс болмағанына өкінеміз', rateLoP: 'Не жақсартуға болатынын жазыңыз — хабарламаны басқарушы өзі оқиды.', rateSend: 'Басқарушыға жіберу',
+    netErr: 'Желі қатесі, қайталап көріңіз', scanH: 'Үстелдегі QR-ды сканерлеңіз', scanP: 'Тапсырыс беру немесе даяшыны шақыру үшін телефон камерасын үстеліңіздегі QR-кодқа бағыттаңыз. Мәзірді осылай да көре аласыз.',
+    commentPh: 'Пиязсыз, ащырақ, бәрін бірге әкеліңіз…', okTable: 'Даяшы тапсырысты бірнеше минутта растайды. Күйі «Тапсырыстарым» бөлімінде.', okWeb: 'Растау үшін қоңырау шаламыз. Күйін осы жерден көруге болады.',
+    receiver: 'Алушы', optional: 'қаласаңыз', bkEventPh: 'Безендіру, торт, музыка, балалар үстелі…', bkTablePh: 'Терезе жанында, балалар орындығы, тыныш үстел…', preorderPh: 'Бешбармақ 10 адамға, хан палауы 2,5 кг, кәуап…',
+    needNamePhone: 'Аты мен телефонды енгізіңіз', added: 'Себетке қосылды', addHint: 'Тағамдарды «+» арқылы қосыңыз',
     thanks: 'Рахмет!', close: 'Жабу', min: 'Жеткізудің ең аз сомасы', stopErr: 'Қазір жоқ',
     features: [['3', 'VIP-зал', '25, 15 және 10 қонаққа + 60 орындық жалпы зал'], ['12–24', 'күн сайын', 'Түскі ас, кешкі ас, кешкі кездесулер'], ['4.8★', '2ГИС-те', '280-нен астам баға'], ['🧸', 'Балалар аймағы', 'Кішкентай қонақтарға ойын бөлмесі']],
   },
@@ -121,15 +129,25 @@ ${[0, 45, 90, 135].map(a => `<g transform="rotate(${a} 50 50)"><path d="M50 14c9
 
 // ---------- data ----------
 let D = null;
-let cart = store.get(CART_KEY, {});
+// Ключ стола приходит из QR (/t/5?k=…) — без него нельзя заказать или позвать официанта с чужого места
+const qsK = new URLSearchParams(location.search).get('k');
+if (TABLE && qsK) { store.set('altyn.tk.' + TABLE, { k: qsK, at: Date.now() }); history.replaceState(null, '', '/t/' + TABLE); }
+const TK = TABLE ? store.get('altyn.tk.' + TABLE, {}).k || '' : '';
+// Корзина стола живёт 6 часов (следующие гости за этим столом начинают с пустой)
+const cartRaw = store.get(CART_KEY, {});
+let cart = cartRaw && cartRaw.at ? (TABLE && Date.now() - cartRaw.at > 6 * 3600e3 ? {} : cartRaw.items || {}) : (cartRaw || {});
+const saveCart = () => store.set(CART_KEY, { items: cart, at: Date.now() });
 let myOrders = store.get(ORDERS_KEY, []);
 let filt = { q: '', tag: '' };
 
 async function api(path, opts = {}) {
   const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || 'Ошибка сети, попробуйте ещё раз');
+  if (!r.ok) { if (j.code === 'table') showScanQr(); const e = new Error(j.error || t('netErr')); e.data = j; throw e; }
   return j;
+}
+function showScanQr() {
+  setTimeout(() => sheet('scan', t('scanH'), `<div class="big-ok">📱</div><p class="center">${t('scanP')}</p>`), 50);
 }
 function toast(msg) {
   const el = $('#toast'); el.textContent = msg; el.classList.add('on');
@@ -142,7 +160,8 @@ const H = (k) => { const h = S().home || {}; return (LANG === 'kk' && h[k + 'Kk'
 const visItems = () => D.items.filter(i => !i.hidden && !D.categories.find(c => c.id === i.cat)?.hidden);
 const visCats = () => D.categories.filter(c => !c.hidden);
 const S = () => D.settings;
-const waLink = text => `https://wa.me/${S().whatsapp}?text=${encodeURIComponent(text)}`;
+const waLink = text => `https://wa.me/${String(S().whatsapp || '').replace(/\D/g, '')}?text=${encodeURIComponent(text)}`;
+const tel = () => String(S().phone || '').replace(/[^+\d]/g, '');
 
 // ---------- cart ----------
 function cartCount() { return Object.values(cart).reduce((s, q) => s + q, 0); }
@@ -151,7 +170,7 @@ function setQty(id, q) {
   const it = item(id); if (!it) return;
   if (it.stop && q > (cart[id] || 0)) return toast(t('stopErr'));
   if (q <= 0) delete cart[id]; else cart[id] = Math.min(50, q);
-  store.set(CART_KEY, cart); refreshCartUI();
+  saveCart(); refreshCartUI();
 }
 function qtyCtl(id) {
   const q = cart[id] || 0;
@@ -185,6 +204,7 @@ function sheet(kind, title, bodyHtml, footHtml = '') {
   return $('.sheet', root);
 }
 function closeSheet(keepHistory) {
+  if (closeSheet.onClose) { const f = closeSheet.onClose; closeSheet.onClose = null; f(); }
   $('#sheet-root').innerHTML = ''; document.body.style.overflow = '';
   if (!keepHistory && closeSheet.pushed) { closeSheet.pushed = false; history.back(); }
 }
@@ -202,7 +222,7 @@ function dishRow(it) {
 }
 function openDish(id) {
   const it = item(id); if (!it) return;
-  sheet('dish', esc(nm(it)), `${it.photo ? `<div class="dish-hero" style="background-image:url('${it.photo}')"></div>` : ''}
+  sheet('dish', esc(nm(it)), `${it.photo ? `<div class="dish-hero" style="background-image:url('${esc(encodeURI(it.photo))}')"></div>` : ''}
     ${ds(it) ? `<p>${esc(ds(it))}</p>` : ''}${tagsHtml(it)}
     <div class="tot"><span>${D.categories.find(c => c.id === it.cat) ? esc(nm(D.categories.find(c => c.id === it.cat))) : ''}</span><span>${money(it.price)}</span></div>`,
     it.stop ? `<button class="btn btn-line btn-block" disabled>${t('t_stop')}</button>` : `<button class="btn btn-gold btn-block" data-add-close="${it.id}">${t('add')} · ${money(it.price)}</button>`);
@@ -212,12 +232,15 @@ function renderCartSheet() {
   const ids = Object.keys(cart).filter(item);
   const upIds = [...new Set(ids.flatMap(id => (D.pairs || {})[item(id).cat] || []))].filter(x => !cart[x] && item(x) && !item(x).stop && !item(x).hidden).slice(0, 6);
   const s = S();
+  const types = [s.pickup?.enabled !== false && 'pickup', s.delivery?.enabled && 'delivery'].filter(Boolean);
+  if (!TABLE && types.length && !types.includes(checkout.type)) checkout.type = types[0];
+  const fee = !TABLE && checkout.type === 'delivery' ? +s.delivery?.fee || 0 : 0;
   const body = !ids.length ? `<div class="empty">${t('empty')}</div>` : `
     ${ids.map(id => { const it = item(id); return `<div class="ci"><div class="nm">${esc(nm(it))}<small>${money(it.price)}</small></div>${qtyCtl(id)}</div>`; }).join('')}
     ${upIds.length ? `<p class="note" style="margin:16px 0 4px;font-weight:600">${t('alsoTake')}</p><div class="up">${upIds.map(id => { const it = item(id); return `<div class="u"><b>${esc(nm(it))}</b><span class="muted">${money(it.price)}</span><button class="btn btn-sm btn-dark" data-add="${id}">+ ${t('add')}</button></div>`; }).join('')}</div>` : ''}
     ${!TABLE && checkout.type === 'delivery' && s.delivery?.fee ? `<div class="ci"><div class="nm">${t('delivery')}<small>${esc(s.delivery.note || '')}</small></div><b>${money(s.delivery.fee)}</b></div>` : ''}
-    <div class="tot"><span>${t('total')}</span><span>${money(cartSum() + (!TABLE && checkout.type === 'delivery' ? s.delivery?.fee || 0 : 0))}</span></div>
-    ${TABLE ? `<div class="fld"><label>${t('comment2')}</label><textarea id="c-comment" rows="2" placeholder="Без лука, острее, подать всё сразу…"></textarea></div>` : `
+    <div class="tot"><span>${t('total')}</span><span>${money(cartSum() + fee)}</span></div>
+    ${TABLE ? `<div class="fld"><label>${t('comment2')}</label><textarea id="c-comment" rows="2" placeholder="${t('commentPh')}"></textarea></div>` : `
       <div class="seg" style="margin-top:10px">${s.pickup?.enabled !== false ? `<button data-otype="pickup" class="${checkout.type === 'pickup' ? 'on' : ''}">${t('pickup')}</button>` : ''}${s.delivery?.enabled ? `<button data-otype="delivery" class="${checkout.type === 'delivery' ? 'on' : ''}">${t('delivery')}</button>` : ''}</div>
       <div class="form">
         <div class="fld"><label>${t('name')}</label><input id="c-name" autocomplete="name" value="${esc(checkout.name)}"></div>
@@ -225,7 +248,7 @@ function renderCartSheet() {
         ${checkout.type === 'delivery' ? `<div class="fld full"><label>${t('addr')}</label><input id="c-addr" autocomplete="street-address" value="${esc(checkout.address)}"></div>${s.delivery?.minOrder ? `<p class="note full">${t('min')}: ${money(s.delivery.minOrder)}</p>` : ''}` : ''}
         <div class="fld full"><label>${t('comment2')}</label><textarea id="c-comment" rows="2"></textarea></div>
       </div>`}`;
-  const foot = ids.length ? `<button class="btn btn-gold btn-block" data-submit-order>${TABLE ? t('sendKitchen') : t('checkout')} · ${money(cartSum())}</button>` : '';
+  const foot = ids.length ? `<button class="btn btn-gold btn-block" data-submit-order>${TABLE ? t('sendKitchen') : t('checkout')} · ${money(cartSum() + fee)}</button>` : '';
   const el = $('.sheet[data-kind=cart]');
   if (el) {
     const keep = { c: $('#c-comment')?.value, n: $('#c-name')?.value, p: $('#c-phone')?.value, a: $('#c-addr')?.value };
@@ -240,7 +263,7 @@ function renderCartSheet() {
 const checkout = store.get('altyn.checkout', { type: 'pickup', name: '', phone: '', address: '' });
 
 async function submitOrder(btn) {
-  const payload = { type: TABLE ? 'table' : checkout.type, table: TABLE || '', items: Object.entries(cart).map(([id, qty]) => ({ id, qty })), comment: $('#c-comment')?.value || '' };
+  const payload = { type: TABLE ? 'table' : checkout.type, table: TABLE || '', k: TK, items: Object.entries(cart).map(([id, qty]) => ({ id, qty })), comment: $('#c-comment')?.value || '' };
   if (!TABLE) {
     Object.assign(checkout, { name: $('#c-name').value.trim(), phone: $('#c-phone').value.trim(), address: $('#c-addr')?.value.trim() || '' });
     store.set('altyn.checkout', checkout);
@@ -252,12 +275,15 @@ async function submitOrder(btn) {
     const r = await api('/api/orders', { method: 'POST', body: payload });
     myOrders.unshift({ id: r.id, token: r.token, no: r.no, total: r.total, at: Date.now() }); myOrders = myOrders.slice(0, 20);
     store.set(ORDERS_KEY, myOrders);
-    cart = {}; store.set(CART_KEY, cart); refreshCartUI();
+    cart = {}; saveCart(); refreshCartUI();
     sheet('ok', t('orderOk'), `<div class="big-ok">✅</div><p class="center"><b>${t('orderNo')}${r.no}</b> · ${money(r.total)}</p>
-      <p class="center muted">${TABLE ? 'Официант подтвердит заказ в течение пары минут. Статус видно в «Мои заказы».' : 'Мы перезвоним для подтверждения. Статус можно смотреть здесь же.'}</p>`,
+      <p class="center muted">${TABLE ? t('okTable') : t('okWeb')}</p>`,
       `<button class="btn btn-dark btn-block" data-track>${t('track')}</button>`);
     renderMyOrdersChip(); pollOrders();
-  } catch (e) { toast(e.message); btn.disabled = false; btn.textContent = t('sendKitchen'); }
+  } catch (e) {
+    toast(e.message); btn.disabled = false; btn.textContent = TABLE ? t('sendKitchen') : t('checkout');
+    if (e.data?.stop || e.data?.gone) refreshMenuData();
+  }
 }
 
 // ---------- order tracking ----------
@@ -267,17 +293,18 @@ async function pollOrders() {
   const recent = myOrders.filter(o => Date.now() - o.at < 12 * 3600e3);
   if (!recent.length) return;
   await Promise.all(recent.map(o => api(`/api/orders/${o.id}?t=${o.token}`).then(r => { orderState[o.id] = r; }).catch(() => {})));
-  if ($('.sheet[data-kind=track]')) openTrack();
+  const tr = $('.sheet[data-kind=track] .sh-b'); if (tr) tr.innerHTML = trackHtml();
   renderMyOrdersChip();
 }
-function openTrack() {
+function openTrack() { sheet('track', t('track'), trackHtml()); }
+function trackHtml() {
   const recent = myOrders.filter(o => orderState[o.id]);
-  sheet('track', t('track'), recent.length ? recent.map(o => {
+  return recent.length ? recent.map(o => {
     const r = orderState[o.id], i = STEPS.indexOf(r.status);
     return `<div class="ostat"><div style="display:flex;justify-content:space-between"><b>${t('orderNo')}${r.no}</b><span>${money(r.total)}</span></div>
       <div class="status">${STEPS.map((s, k) => `<span class="${k <= i || r.status === 'closed' ? 'on' : ''}"></span>`).join('')}</div>
-      <div class="note"><b style="color:var(--text)">${t('st_' + r.status)}</b> · ${r.items.map(x => `${esc(x.name)} ×${x.qty}`).join(', ')}</div></div>`;
-  }).join('') : `<div class="empty">—</div>`);
+      <div class="note"><b style="color:var(--text)">${t('st_' + r.status)}</b> · ${r.items.map(x => `${esc(nm(x))} ×${x.qty}`).join(', ')}</div></div>`;
+  }).join('') : `<div class="empty">—</div>`;
 }
 function renderMyOrdersChip() {
   const box = $('#myorders'); if (!box) return;
@@ -287,14 +314,14 @@ function renderMyOrdersChip() {
 
 // ---------- table: waiter & bill & kaspi ----------
 async function callWaiter(kind = 'waiter', extra = {}) {
-  try { await api('/api/calls', { method: 'POST', body: { table: TABLE, kind, ...extra } }); toast(t('waiterComing')); }
+  try { await api('/api/calls', { method: 'POST', body: { table: TABLE, k: TK, kind, ...extra } }); toast(t('waiterComing')); }
   catch (e) { toast(e.message); }
 }
 async function openBill() {
-  let b; try { b = await api(`/api/table/${encodeURIComponent(TABLE)}/bill`); } catch (e) { return toast(e.message); }
+  let b; try { b = await api(`/api/table/${encodeURIComponent(TABLE)}/bill?k=${encodeURIComponent(TK)}`); } catch (e) { return toast(e.message); }
   const k = S().kaspi || {};
   const body = !b.items.length ? `<p class="muted">${t('noBill')}</p>` : `
-    ${b.items.map(x => `<div class="ci"><div class="nm">${esc(x.name)}<small>${x.qty} × ${money(x.price)}</small></div><b>${money(x.qty * x.price)}</b></div>`).join('')}
+    ${b.items.map(x => `<div class="ci"><div class="nm">${esc(nm(x))}<small>${x.qty} × ${money(x.price)}</small></div><b>${money(x.qty * x.price)}</b></div>`).join('')}
     ${b.fee ? `<div class="ci"><div class="nm">${t('service')} ${S().serviceFee}%</div><b>${money(b.fee)}</b></div>` : ''}
     <div class="tot"><span>${t('total')}</span><span>${money(b.total)}</span></div>`;
   sheet('bill', t('billH'), body, `
@@ -308,28 +335,29 @@ function openKaspi(amount) {
       <div class="kaspi-badge">● Kaspi.kz</div>
       ${k.qr ? `<img src="${esc(k.qr)}" alt="Kaspi QR">` : ''}
       <div class="tot" style="justify-content:center;gap:10px"><span>${t('total')}:</span><span>${money(amount)}</span></div>
-      <p class="note">${t('kaspiStep')}. ${esc(k.receiver ? 'Получатель: ' + k.receiver : '')}</p></div>`,
+      <p class="note">${t('kaspiStep')}. ${esc(k.receiver ? t('receiver') + ': ' + k.receiver : '')}</p></div>`,
     `${k.link ? `<a class="btn btn-block" style="background:#f14635;color:#fff" href="${esc(k.link)}" target="_blank" rel="noopener">${t('openKaspi')}</a>` : ''}
      <button class="btn btn-gold btn-block" data-paid="${amount}">${t('paid')}</button>`);
 }
 function openRate() {
-  let rating = 0;
+  let rating = 0, sent = false;
+  const send = (extra = {}) => { if (sent || !rating) return Promise.resolve(); sent = true; return api('/api/reviews', { method: 'POST', body: { rating, table: TABLE || '', text: '', ...extra } }).catch(() => {}); };
   const s = sheet('rate', t('rateH'), `<p class="center muted">${t('rateP')}</p><div class="star-pick">${[1, 2, 3, 4, 5].map(n => `<button data-star="${n}" aria-label="${n}">★</button>`).join('')}</div><div id="rate-next"></div>`);
+  closeSheet.onClose = () => send(); // после sheet(): он сам вызывает closeSheet и сбросил бы обработчик
   s.addEventListener('click', e => {
     const st = e.target.closest('[data-star]'); if (!st) return;
     rating = +st.dataset.star;
     $$('[data-star]', s).forEach(b => b.classList.toggle('on', +b.dataset.star <= rating));
     const nx = $('#rate-next');
     if (rating >= 4) {
-      api('/api/reviews', { method: 'POST', body: { rating, table: TABLE || '', text: '' } }).catch(() => {});
-      nx.innerHTML = `<h4 class="serif center" style="font-size:24px;margin:6px 0">${t('rateHi')}</h4><p class="center muted">${t('rateHiP')}</p><a class="btn btn-gold btn-block" href="${esc(S().gis)}/tab/reviews" target="_blank" rel="noopener">${t('rateGis')}</a>`;
+      nx.innerHTML = `<h4 class="serif center" style="font-size:24px;margin:6px 0">${t('rateHi')}</h4><p class="center muted">${t('rateHiP')}</p><a class="btn btn-gold btn-block" data-gis href="${esc(S().gis)}/tab/reviews" target="_blank" rel="noopener">${t('rateGis')}</a>`;
+      $('[data-gis]', nx).onclick = () => send();
     } else {
       nx.innerHTML = `<h4 class="serif center" style="font-size:24px;margin:6px 0">${t('rateLo')}</h4><p class="center muted">${t('rateLoP')}</p>
-        <div class="fld"><textarea id="rv-text" rows="3"></textarea></div><div class="fld" style="margin-top:8px"><input id="rv-phone" type="tel" placeholder="${t('phone')} (по желанию)"></div>
+        <div class="fld"><textarea id="rv-text" rows="3"></textarea></div><div class="fld" style="margin-top:8px"><input id="rv-phone" type="tel" placeholder="${t('phone')} (${t('optional')})"></div>
         <button class="btn btn-dark btn-block" style="margin-top:10px" data-rv-send>${t('rateSend')}</button>`;
       $('[data-rv-send]', nx).onclick = async () => {
-        try { await api('/api/reviews', { method: 'POST', body: { rating, table: TABLE || '', text: $('#rv-text').value, phone: $('#rv-phone').value, private: true } }); nx.innerHTML = `<p class="center"><b>${t('thanks')}</b></p>`; }
-        catch (err) { toast(err.message); }
+        await send({ text: $('#rv-text').value, phone: $('#rv-phone').value, private: true }); nx.innerHTML = `<p class="center"><b>${t('thanks')}</b></p>`;
       };
     }
   });
@@ -349,7 +377,7 @@ function header() {
 function menuSection(opts = {}) {
   const cats = visCats().filter(c => visItems().some(i => i.cat === c.id));
   const q = filt.q.toLowerCase();
-  const list = visItems().filter(i => (!q || (i.name + ' ' + i.desc).toLowerCase().includes(q)) && (!filt.tag || (i.tags || []).includes(filt.tag)));
+  const list = visItems().filter(i => (!q || [i.name, i.nameKk, i.desc, i.descKk].filter(Boolean).join(' ').toLowerCase().includes(q)) && (!filt.tag || (i.tags || []).includes(filt.tag)));
   const tagSet = ['hit', 'national', 'spicy', 'veg', 'kids'];
   return `<div class="menu-tools"><div class="${opts.wrap === false ? '' : 'wrap'}">
       <label class="search">${I.search}<input id="q" type="search" placeholder="${t('search')}" value="${esc(filt.q)}" autocomplete="off"></label>
@@ -362,10 +390,10 @@ function menuSection(opts = {}) {
 }
 function rerenderMenu() {
   const host = $('#menu-host'); if (!host) return;
-  const pos = $('#q')?.selectionStart;
+  const had = document.activeElement?.id === 'q', pos = $('#q')?.selectionStart;
   host.innerHTML = menuSection({ wrap: true });
-  if (document.activeElement?.id !== 'q' && pos != null) { const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
-  bindCatSpy();
+  if (had) { const q = $('#q'); q.focus(); try { q.setSelectionRange(pos, pos); } catch {} }
+  refreshCartUI(); bindCatSpy();
 }
 
 function siteView() {
@@ -380,12 +408,12 @@ function siteView() {
       <p class="lead">${esc(LANG === 'kk' ? s.taglineKk : s.tagline)}. ${esc(H('lead') || t('heroLead'))}</p>
       <div class="ctas"><a class="btn btn-gold" href="#book">${I.book} ${t('bookBtn')}</a><a class="btn btn-ghost" href="#menu">${t('seeMenu')}</a></div>
       <div class="badges">
-        <a class="badge" href="${esc(s.gis)}/tab/reviews" target="_blank" rel="noopener"><b>★ ${s.gisRating}</b> · ${s.gisReviews} ${t('reviewsOn')}</a>
+        <a class="badge" href="${esc(s.gis)}/tab/reviews" target="_blank" rel="noopener"><b>★ ${esc(s.gisRating)}</b> · ${s.gisReviews} ${t('reviewsOn')}</a>
         <span class="badge">${I.clock} ${esc(s.hours)} · ${t('daily')}</span>
         <span class="badge">${I.pin} ${esc(LANG === 'kk' ? s.addressKk : s.address)}</span>
       </div>
     </div>
-    <div class="hero-art"><div class="arch"><img src="${heroPhoto}" alt="Зал ресторана ALTYN" fetchpriority="high"></div>
+    <div class="hero-art"><div class="arch"><img src="${esc(heroPhoto)}" alt="Зал ресторана ALTYN" fetchpriority="high"></div>
       <div class="ring">${ORN()}</div><div class="cap">${esc(H('heroCaption'))}</div></div>
   </div></section>
 
@@ -412,7 +440,7 @@ function siteView() {
 
   <section class="sec dark-sec" id="halls"><div class="wrap">
     <div class="sec-h"><div><span class="eyebrow">${t('halls')}</span><h2>${t('hallsH')}</h2><p>${t('hallsP')}</p></div></div>
-    <div class="halls">${D.halls.filter(h => !h.hidden).map(h => `<div class="hall"><div class="im"><img src="${h.photo}" alt="${esc(nm(h))}" loading="lazy"><span class="kind">${h.isNew ? 'NEW · ' : ''}${h.kind === 'vip' ? 'VIP' : (LANG === 'kk' ? 'ЖАЛПЫ' : 'ОБЩИЙ')}</span></div>
+    <div class="halls">${D.halls.filter(h => !h.hidden).map(h => `<div class="hall"><div class="im"><img src="${esc(h.photo)}" alt="${esc(nm(h))}" loading="lazy"><span class="kind">${h.isNew ? 'NEW · ' : ''}${h.kind === 'vip' ? 'VIP' : (LANG === 'kk' ? 'ЖАЛПЫ' : 'ОБЩИЙ')}</span></div>
       <div class="bd"><h4>${esc(nm(h))}</h4><p>${esc(ds(h))}</p><div class="cap">${h.capacity ? `${t('upTo')} ${h.capacity} ${t('guests')}` : t('capAsk')}</div>
       <button class="btn btn-ghost btn-sm" data-book-hall="${h.id}">${t('bookHall')}</button></div></div>`).join('')}</div>
   </div></section>
@@ -426,7 +454,7 @@ function siteView() {
         <li><i>3</i><span>${esc(s.deposit)}</span></li>
       </ul>
       <a class="btn btn-wa" href="${waLink('Здравствуйте! Хочу забронировать в ALTYN')}" target="_blank" rel="noopener">${I.wa} WhatsApp</a>
-      <a class="btn btn-line" href="tel:${s.phone.replace(/\s/g, '')}" style="margin-left:6px">${I.phone} ${esc(s.phone)}</a>
+      <a class="btn btn-line" href="tel:${tel()}" style="margin-left:6px">${I.phone} ${esc(s.phone)}</a>
     </div>
     <div class="card" id="book-card">${bookForm()}</div>
   </div></section>
@@ -434,14 +462,14 @@ function siteView() {
   <section class="sec dark-sec" id="gallery"><div class="wrap">
     <div class="sec-h"><div><span class="eyebrow">${t('gallery')}</span><h2>${t('galleryH')}</h2><p>${t('galleryP')}</p></div>
       <a class="btn btn-ghost btn-sm" href="https://instagram.com/${esc(s.instagram)}" target="_blank" rel="noopener">${I.ig} @${esc(s.instagram)}</a></div>
-    <div class="reels">${D.gallery.filter(g => g.type === 'reel').map(g => `<div class="reel" data-reel="${esc(g.code)}" role="button" tabindex="0" aria-label="${esc(g.caption)}"><img src="${g.cover}" alt="" loading="lazy"><div class="play"><span>${I.play}</span></div><div class="cp">${esc(g.caption)}</div></div>`).join('')}</div>
-    <div class="photos">${D.gallery.filter(g => g.type === 'photo').map(g => `<img src="${g.thumb || g.src}" data-full="${g.src}" alt="" loading="lazy">`).join('')}</div>
+    <div class="reels">${D.gallery.filter(g => g.type === 'reel').map(g => `<div class="reel" data-reel="${esc(g.code)}" role="button" tabindex="0" aria-label="${esc(g.caption)}"><img src="${esc(g.cover)}" alt="" loading="lazy"><div class="play"><span>${I.play}</span></div><div class="cp">${esc(g.caption)}</div></div>`).join('')}</div>
+    <div class="photos">${D.gallery.filter(g => g.type === 'photo').map(g => `<img src="${esc(g.thumb || g.src)}" data-full="${esc(g.src)}" alt="" loading="lazy">`).join('')}</div>
   </div></section>
 
   <section class="sec" id="reviews"><div class="wrap">
     <div class="sec-h"><div><span class="eyebrow dark">${t('reviews')}</span><h2>${t('reviewsH')}</h2><p>${t('reviewsP')}</p></div></div>
     <div class="rv-top">
-      <div class="score"><div class="big">${s.gisRating}</div><div class="stars">★★★★★</div><p style="margin:8px 0 18px;color:#cdb99a">${s.gisReviews} ${t('reviewsOn')}</p>
+      <div class="score"><div class="big">${esc(s.gisRating)}</div><div class="stars">★★★★★</div><p style="margin:8px 0 18px;color:#cdb99a">${s.gisReviews} ${t('reviewsOn')}</p>
         <a class="btn btn-gold btn-block" href="${esc(s.gis)}/tab/reviews" target="_blank" rel="noopener">${t('allReviews')}</a>
         <button class="btn btn-ghost btn-block" style="margin-top:10px" data-rate>${t('leaveReview')}</button></div>
       <div class="rv-list">${reviews.slice(0, 8).map(r => `<div class="rv"><div class="h"><b>${esc(r.name)}</b><span class="stars" style="font-size:14px">${'★'.repeat(r.rating)}</span></div>
@@ -454,7 +482,7 @@ function siteView() {
     <div class="contacts"><div class="clist">
       <a class="citem" href="${esc(s.gis)}" target="_blank" rel="noopener"><i>${I.pin}</i><div><small>${t('address')}</small>${esc(s.city)}, ${esc(LANG === 'kk' ? s.addressKk : s.address)}<br><span class="gold">${t('route')} →</span></div></a>
       <div class="citem"><i>${I.clock}</i><div><small>${t('hours')}</small>${esc(s.hours)}, ${t('daily')}</div></div>
-      <a class="citem" href="tel:${s.phone.replace(/\s/g, '')}"><i>${I.phone}</i><div><small>${t('call')}</small>${esc(s.phone)}</div></a>
+      <a class="citem" href="tel:${tel()}"><i>${I.phone}</i><div><small>${t('call')}</small>${esc(s.phone)}</div></a>
       <a class="citem" href="${waLink('Здравствуйте!')}" target="_blank" rel="noopener"><i>${I.wa}</i><div><small>WhatsApp</small>${esc(s.phone)}</div></a>
       <a class="citem" href="https://instagram.com/${esc(s.instagram)}" target="_blank" rel="noopener"><i>${I.ig}</i><div><small>Instagram</small>@${esc(s.instagram)}</div></a>
     </div>
@@ -465,6 +493,7 @@ function siteView() {
 }
 
 let bk = { kind: 'table', hall: '', event: '' };
+function keepBook() { const f = $('#bform'); if (f) Object.assign(bk, Object.fromEntries(new FormData(f))); }
 function bookForm() {
   const today = new Date(); const iso = d => new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
   return `<div class="seg"><button data-bkind="table" class="${bk.kind === 'table' ? 'on' : ''}">${t('tableT')}</button><button data-bkind="event" class="${bk.kind === 'event' ? 'on' : ''}">${t('eventT')}</button></div>
@@ -474,17 +503,17 @@ function bookForm() {
     <div class="fld"><label>${t('nGuests')}</label><input name="guests" type="number" min="1" max="500" inputmode="numeric" value="${bk.guests || (bk.kind === 'event' ? 10 : 2)}"></div>
     <div class="fld"><label>${t('hall')}</label><select name="hall"><option value="">${t('anyHall')}</option>${D.halls.filter(h => !h.hidden).map(h => `<option value="${h.id}" ${bk.hall === h.id ? 'selected' : ''}>${esc(nm(h))}${h.capacity ? ` (${t('upTo')} ${h.capacity})` : ''}</option>`).join('')}</select></div>
     ${bk.kind === 'event' ? `<div class="fld full"><label>${t('eventType')}</label><div class="pills">${t('events').map(e => `<button type="button" data-ev="${esc(e)}" class="${bk.event === e ? 'on' : ''}">${esc(e)}</button>`).join('')}</div></div>` : ''}
-    <div class="fld"><label>${t('name')}</label><input name="name" autocomplete="name" required></div>
-    <div class="fld"><label>${t('phone')}</label><input name="phone" type="tel" autocomplete="tel" placeholder="+7 7__ ___ __ __" required></div>
-    <div class="fld full"><label>${t('comment')}</label><textarea name="comment" rows="2" placeholder="${bk.kind === 'event' ? 'Оформление, торт, музыка, детский стол…' : 'У окна, детский стул, тихий столик…'}"></textarea></div>
-    ${bk.kind === 'event' ? `<div class="fld full"><label>${t('preorder')}</label><textarea name="preorder" rows="2" placeholder="Бешбармак на 10, плов ханский 2,5 кг, шашлыки…"></textarea></div>` : ''}
+    <div class="fld"><label>${t('name')}</label><input name="name" autocomplete="name" value="${esc(bk.name || '')}" required></div>
+    <div class="fld"><label>${t('phone')}</label><input name="phone" type="tel" autocomplete="tel" placeholder="+7 7__ ___ __ __" value="${esc(bk.phone || '')}" required></div>
+    <div class="fld full"><label>${t('comment')}</label><textarea name="comment" rows="2" placeholder="${bk.kind === 'event' ? t('bkEventPh') : t('bkTablePh')}">${esc(bk.comment || '')}</textarea></div>
+    ${bk.kind === 'event' ? `<div class="fld full"><label>${t('preorder')}</label><textarea name="preorder" rows="2" placeholder="${t('preorderPh')}">${esc(bk.preorder || '')}</textarea></div>` : ''}
     <div class="full"><button class="btn btn-gold btn-block" type="submit">${t('send')}</button><p class="note" style="margin:8px 0 0">${esc(S().deposit)}</p></div>
   </form>`;
 }
 async function submitBooking(form) {
   const f = Object.fromEntries(new FormData(form));
   Object.assign(bk, { date: f.date, time: f.time, guests: f.guests, hall: f.hall });
-  if (!f.name.trim() || f.phone.replace(/\D/g, '').length < 10) return toast(LANG === 'kk' ? 'Аты мен телефонды енгізіңіз' : 'Укажите имя и телефон');
+  if (!f.name.trim() || f.phone.replace(/\D/g, '').length < 10) return toast(t('needNamePhone'));
   const btn = $('button[type=submit]', form); btn.disabled = true; btn.textContent = t('sending');
   try {
     await api('/api/bookings', { method: 'POST', body: { ...f, kind: bk.kind, event: bk.event } });
@@ -504,7 +533,7 @@ function tableView() {
     <div class="twelcome"><div class="wrap"><h2>${t('welcome')}</h2><p>${t('welcomeP')}</p><div class="myorders" id="myorders"></div></div></div>
     <div id="menu-host">${menuSection()}</div>
     <div class="wrap" style="padding-block:30px"><button class="btn btn-line btn-block" data-rate>${t('leaveReview')}</button>
-      <p class="center note" style="margin-top:14px">${esc(S().fullName)} · ${esc(S().address)} · ${esc(S().phone)}</p></div>
+      <p class="center note" style="margin-top:14px">${esc(S().fullName)} · ${esc(LANG === 'kk' ? S().addressKk || S().address : S().address)} · ${esc(S().phone)}</p></div>
   </div>
   <nav class="dock">
     <button data-waiter>${I.bell}<span>${t('waiter')}</span></button>
@@ -546,7 +575,7 @@ document.addEventListener('click', e => {
   if (d.lang) { LANG = d.lang; store.set('altyn.lang', LANG); return render(); }
   if (d.burger !== undefined) return $('#nav').classList.toggle('open');
   if (el.closest('#nav') && el.tagName === 'A') $('#nav').classList.remove('open');
-  if (d.add) { e.stopPropagation(); setQty(d.add, (cart[d.add] || 0) + 1); if (!TABLE && cartCount() === 1) toast('Добавлено в корзину'); return; }
+  if (d.add) { e.stopPropagation(); setQty(d.add, (cart[d.add] || 0) + 1); if (!TABLE && cartCount() === 1) toast(t('added')); return; }
   if (d.addClose) { setQty(d.addClose, (cart[d.addClose] || 0) + 1); return closeSheet(); }
   if (d.inc !== undefined || d.dec !== undefined) { e.stopPropagation(); const id = el.closest('.qty').dataset.id; return setQty(id, (cart[id] || 0) + (d.inc !== undefined ? 1 : -1)); }
   if (d.openDish && !e.target.closest('.rt')) return openDish(d.openDish);
@@ -556,12 +585,12 @@ document.addEventListener('click', e => {
   if (d.track !== undefined) return openTrack();
   if (d.cat) { const c = $('#cat-' + d.cat); if (c) window.scrollTo({ top: c.getBoundingClientRect().top + scrollY - (TABLE ? 190 : 200), behavior: 'smooth' }); return; }
   if (d.tag) { filt.tag = filt.tag === d.tag ? '' : d.tag; return rerenderMenu(); }
-  if (d.bkind) { bk.kind = d.bkind; $('#book-card').innerHTML = bookForm(); return; }
+  if (d.bkind) { keepBook(); bk.kind = d.bkind; $('#book-card').innerHTML = bookForm(); return; }
   if (d.ev) { bk.event = d.ev; $$('[data-ev]').forEach(b => b.classList.toggle('on', b === el)); return; }
-  if (d.bookHall) { bk.hall = d.bookHall; bk.kind = D.halls.find(h => h.id === d.bookHall)?.kind === 'vip' ? 'event' : bk.kind; $('#book-card').innerHTML = bookForm(); return $('#book').scrollIntoView({ behavior: 'smooth' }); }
-  if (d.online !== undefined) { setTimeout(() => toast(LANG === 'kk' ? 'Тағамдарды «+» арқылы қосыңыз' : 'Добавляйте блюда кнопкой «+»'), 600); return; }
+  if (d.bookHall) { keepBook(); bk.hall = d.bookHall; bk.kind = D.halls.find(h => h.id === d.bookHall)?.kind === 'vip' ? 'event' : bk.kind; $('#book-card').innerHTML = bookForm(); return $('#book').scrollIntoView({ behavior: 'smooth' }); }
+  if (d.online !== undefined) { setTimeout(() => toast(t('addHint')), 600); return; }
   if (d.reel) return sheet('reel', 'Instagram', `<iframe src="https://www.instagram.com/reel/${encodeURIComponent(d.reel)}/embed" style="width:100%;height:min(74vh,720px);border:0;border-radius:14px;background:#000" allowfullscreen loading="lazy"></iframe>`);
-  if (d.full) return sheet('photo', 'ALTYN', `<img src="${d.full}" alt="" style="width:100%;border-radius:14px">`);
+  if (d.full) return sheet('photo', 'ALTYN', `<img src="${esc(d.full)}" alt="" style="width:100%;border-radius:14px">`);
   if (d.rate !== undefined) return openRate();
   if (d.waiter !== undefined) return callWaiter('waiter');
   if (d.bill !== undefined) return openBill();
@@ -581,15 +610,26 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('submit', e => { if (e.target.id === 'bform') { e.preventDefault(); submitBooking(e.target); } });
 
+// Свежие цены/стоп-лист: перерисовываем меню, если гость сейчас ничего не вводит и не открыт лист
+async function refreshMenuData() {
+  try {
+    D = await api('/api/data');
+    for (const id of Object.keys(cart)) if (!item(id) || item(id).hidden) delete cart[id];
+    if (!$('#sheet-root').innerHTML && document.activeElement?.id !== 'q') { const y = scrollY; rerenderMenu(); scrollTo(0, y); }
+    else refreshCartUI();
+  } catch {}
+}
+
 // ---------- boot ----------
 (async function boot() {
   try { D = await api('/api/data'); }
-  catch { $('#app').innerHTML = `<div class="wrap" style="padding:60px 20px"><h2 class="serif">ALTYN</h2><p>Не удалось загрузить меню. Обновите страницу или позвоните: <a href="tel:+77772504878">+7 777 250 48 78</a></p></div>`; return; }
+  catch { $('#app').innerHTML = `<div class="wrap" style="padding:60px 20px"><h2 class="serif">ALTYN</h2><p>Не удалось загрузить меню / Мәзір жүктелмеді. <a href="tel:+77772504878">+7 777 250 48 78</a></p></div>`; return; }
   // вычищаем из корзины то, чего больше нет в меню
-  for (const id of Object.keys(cart)) if (!item(id)) delete cart[id];
+  for (const id of Object.keys(cart)) if (!item(id) || item(id).hidden) delete cart[id];
   render(); pollOrders();
   setInterval(pollOrders, 12000);
-  if (TABLE) setInterval(async () => { try { const d = await api('/api/data'); D = d; } catch {} }, 60000);
+  setInterval(refreshMenuData, TABLE ? 45000 : 120000);
+  if (TABLE && !TK) showScanQr();
   if ('serviceWorker' in navigator && !TABLE) navigator.serviceWorker.register('/sw.js').catch(() => {});
 })();
 })();

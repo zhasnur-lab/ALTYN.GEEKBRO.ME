@@ -184,10 +184,12 @@ const PH = { 'Бешбармак из конины': 'beshbarmak', 'Бешбар
   'Плов ханский': 'plov-khan', 'Плов ташкентский': 'plov', 'Курочка в соусе терияки': 'teriyaki', 'Стейк из сёмги': 'salmon',
   'Пицца «Куриная»': 'pizza-tea', 'Пицца «Сырная»': 'pizza-lemonade', 'Сет на компанию': 'shashlyk-assorti',
   'Сет «Горячий» на 4–5 человек': 'shashlyk', 'Сет «Горячий» на 8–10 человек': 'banquet-table', 'Лимонад «Ягодный»': 'drinks' };
+const KK = JSON.parse(fs.readFileSync(new URL('./kk-names.json', import.meta.url)));
 const count = {};
 const items = M.map(([cat, name, desc, price, tags, oldPrice]) => {
   count[cat] = (count[cat] || 0) + 1;
-  return { id: `${cat}${count[cat]}`, cat, name, desc, price, ...(oldPrice ? { oldPrice } : {}), tags, photo: PH[name] ? `/img/gis/${PH[name]}.jpg` : '', thumb: PH[name] ? `/img/gis/${PH[name]}.sm.jpg` : '', stop: false };
+  const iid = `${cat}${count[cat]}`;
+  return { id: iid, cat, name, nameKk: KK[iid] || '', desc, price, ...(oldPrice ? { oldPrice } : {}), tags, photo: PH[name] ? `/img/gis/${PH[name]}.jpg` : '', thumb: PH[name] ? `/img/gis/${PH[name]}.sm.jpg` : '', stop: false };
 });
 
 // Что берут вместе (апселл в корзине)

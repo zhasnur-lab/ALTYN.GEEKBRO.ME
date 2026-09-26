@@ -10,6 +10,7 @@ const mins = iso => Math.floor((Date.now() - Date.parse(iso)) / 60000);
 const fmtT = iso => new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 const isoDay = d => { const x = new Date(Date.now() + d * 864e5); return new Date(x - x.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 
+let staleBanner = false;
 let S = null, tab = localStorage.getItem('altyn.staff.tab') || 'live', es = null, conn = false, dirty = false;
 const seen = new Set();
 const isAdmin = () => S?.role === 'admin';
@@ -20,7 +21,7 @@ async function api(path, opts = {}) {
     headers: isBlob ? { 'Content-Type': opts.body.type } : { 'Content-Type': 'application/json' },
     body: opts.body === undefined ? undefined : isBlob ? opts.body : JSON.stringify(opts.body) });
   const j = await r.json().catch(() => ({}));
-  if (r.status === 401) { S = null; renderLogin(); throw new Error('Войдите заново'); }
+  if (r.status === 401 && path !== '/api/login') { S = null; renderLogin(); throw new Error('Войдите заново'); }
   if (!r.ok) throw new Error(j.error || 'Ошибка');
   return j;
 }
@@ -43,8 +44,28 @@ function beep(kind = 'order') {
 }
 function notify(title, body) {
   if (document.visibilityState === 'visible') return;
-  if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '/img/icon.svg', tag: title });
+  try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '/img/icon.svg', tag: title }); } catch {}
 }
+
+// Звук на телефонах включается только после касания экрана — разблокируем при первом касании
+let soundOn = false;
+function unlockSound() {
+  try { actx ||= new (window.AudioContext || window.webkitAudioContext)(); actx.resume?.(); } catch {}
+  if (!soundOn) { soundOn = true; const b = $('.sound-ban'); if (b) b.remove(); }
+}
+document.addEventListener('pointerdown', unlockSound, { capture: true });
+// Повторяем сигнал каждые 30 с, пока есть непринятые заказы или открытые вызовы
+setInterval(() => {
+  if (!S) return;
+  const waiting = S.orders.some(o => o.status === 'new') || S.calls.some(c => c.status === 'open');
+  if (waiting && soundOn) beep(S.calls.some(c => c.status === 'open') ? 'call' : 'order');
+}, 30000);
+// Экран не гаснет, пока открыта вкладка «Зал»
+let wakeLock = null;
+async function keepAwake() {
+  try { if (tab === 'live' && document.visibilityState === 'visible' && !wakeLock) { wakeLock = await navigator.wakeLock?.request('screen'); wakeLock?.addEventListener('release', () => { wakeLock = null; }); } } catch {}
+}
+document.addEventListener('visibilitychange', () => { keepAwake(); if (document.visibilityState === 'visible' && S) load().then(() => rerender()).catch(() => {}); });
 
 // ---------- вход ----------
 function renderLogin() {
@@ -67,7 +88,17 @@ function upsert(arr, x) { const i = arr.findIndex(y => y.id === x.id); if (i < 0
 function stream() {
   es?.close();
   es = new EventSource('/api/staff/stream');
-  es.onopen = () => { conn = true; hdrConn(); };
+  let first = true;
+  es.onopen = async () => {
+    conn = true; hdrConn();
+    if (first) { first = false; return; }
+    // после обрыва связи: забираем всё, что пришло за это время, и сигналим о новом
+    const before = new Set(seen);
+    try { await load(); } catch { return; }
+    const fresh = [...S.orders.filter(o => o.status === 'new'), ...S.calls.filter(c => c.status === 'open')].filter(x => !before.has(x.id));
+    if (fresh.length) { beep('call'); toast(`Пока не было связи: новых — ${fresh.length}`); }
+    rerender();
+  };
   es.onerror = () => { conn = false; hdrConn(); };
   es.addEventListener('order', e => { const o = JSON.parse(e.data); const isNew = !seen.has(o.id); seen.add(o.id); upsert(S.orders, o);
     if (isNew) { beep('order'); notify(`Новый заказ №${o.no}`, o.type === 'table' ? `Стол ${o.table} · ${money(o.total)}` : `${o.type === 'delivery' ? 'Доставка' : 'Самовывоз'} · ${money(o.total)}`); toast(`Новый заказ №${o.no}`); } rerender(); });
@@ -76,8 +107,15 @@ function stream() {
   es.addEventListener('booking', e => { const b = JSON.parse(e.data); const isNew = !seen.has(b.id); seen.add(b.id); upsert(S.bookings, b);
     if (isNew) { beep('booking'); notify('Новая бронь', `${b.date} ${b.time} · ${b.guests} гостей · ${b.name}`); toast('Новая заявка на бронь'); } rerender(); });
   es.addEventListener('review', e => { S.reviews.unshift(JSON.parse(e.data)); rerender(); });
-  es.addEventListener('menu', e => { const m = JSON.parse(e.data); const it = S.items.find(i => i.id === m.id); if (it) it.stop = m.stop; rerender(); });
-  es.addEventListener('content', () => { if (!dirty && !$('#sheet-root').innerHTML) load().then(rerender); });
+  es.addEventListener('item', e => { const it = JSON.parse(e.data); const i = S.items.findIndex(x => x.id === it.id); if (i >= 0) S.items[i] = it; else S.items.push(it); rerender(); });
+  es.addEventListener('item-del', e => { const { id } = JSON.parse(e.data); S.items = S.items.filter(x => x.id !== id); for (const k in S.pairs || {}) S.pairs[k] = S.pairs[k].filter(x => x !== id); rerender(); });
+  es.addEventListener('items-order', e => { const order = JSON.parse(e.data); S.items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)); rerender(); });
+  es.addEventListener('content', e => {
+    const { ver } = JSON.parse(e.data);
+    if (JSON.stringify(ver) === JSON.stringify(S.ver)) return; // это наше же сохранение
+    if (!dirty && !$('#sheet-root').innerHTML) load().then(() => rerender());
+    else { staleBanner = true; rerender(); }
+  });
 }
 function hdrConn() { const c = $('.conn'); if (c) { c.className = 'conn ' + (conn ? 'ok' : 'bad'); c.textContent = conn ? 'онлайн' : 'нет связи'; } }
 
@@ -104,6 +142,8 @@ function header() {
     <span style="margin-left:auto;display:flex;gap:8px">${'Notification' in window && Notification.permission === 'default' ? '<button class="btn btn-ghost btn-xs" data-notif>🔔 Уведомления</button>' : ''}
     <a class="btn btn-ghost btn-xs" href="/" target="_blank" rel="noopener">Открыть сайт ↗</a>
     <button class="btn btn-ghost btn-xs" data-logout>Выйти</button></span></div>
+    ${!soundOn ? '<div class="sound-ban">🔈 Нажмите в любом месте экрана, чтобы включить звук новых заказов</div>' : ''}
+    ${staleBanner ? '<div class="stale-ban">Другой администратор изменил данные. <button class="btn btn-gold btn-xs" data-reload>Обновить</button></div>' : ''}
     <nav class="tabs">${tabs.map(([k, n, c]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${n}${c ? `<span class="dot">${c}</span>` : ''}</button>`).join('')}</nav></header>`;
 }
 
@@ -178,7 +218,7 @@ function menuView() {
       <label class="search" style="flex:1;min-width:200px;margin:0">🔎<input id="mq" placeholder="Поиск блюда" value="${esc(mq)}"></label>
       ${admin ? `<button class="btn btn-gold btn-sm" data-newitem="">+ Новое блюдо</button><button class="btn btn-line btn-sm" data-cats>Категории</button>` : ''}</div>
     <div class="hint">${admin
-      ? '<b>Как пользоваться:</b> нажмите на блюдо — откроется карточка: фото, названия, состав, цена. Цену можно менять прямо в списке. Стрелки ↑↓ меняют порядок на сайте. Переключатель справа — <b>в наличии / стоп-лист</b>.'
+      ? '<b>Как пользоваться:</b> нажмите на блюдо — откроется карточка: фото, названия, состав, цена. Цену можно менять прямо в списке. Стрелки ↑↓ — порядок на сайте, 🗑 — удалить (нажать дважды). Переключатель справа — <b>в наличии / стоп-лист</b>. Временно убрать блюдо, не удаляя, — в карточке «Показывать на сайте».'
       : 'Переключатель — <b>в наличии / стоп-лист</b>. Блюдо в стоп-листе гости видят серым и не могут заказать.'}</div>
     ${admin && !q ? `<div class="chips" style="margin:6px 0 4px">${S.categories.map(c => `<a class="chip" href="#mc-${c.id}">${esc(c.name)}${c.hidden ? ' (скрыта)' : ''}</a>`).join('')}</div>` : ''}
     ${catsWith.map(c => { const its = items.filter(i => i.cat === c.id); return `<div class="mcat" id="mc-${c.id}"><div class="mcat-h"><h3 class="h2" style="font-size:24px;margin:0">${esc(c.name)} ${c.hidden ? '<span class="tag stop">скрыта</span>' : ''}</h3>
@@ -192,7 +232,7 @@ function itemRow(i, admin, first, last) {
     <div class="mi-bd" ${admin ? `data-edit="${i.id}"` : ''}><b>${esc(i.name)}</b>${i.hidden ? ' <span class="tag stop">скрыто с сайта</span>' : ''}${(i.tags || []).map(t => ` <span class="tag ${t}">${TAGS[t] || t}</span>`).join('')}
       <div class="note">${esc(i.desc || '')}</div></div>
     ${admin ? `<label class="mi-pr"><input type="number" inputmode="numeric" id="pr-${i.id}" data-price="${i.id}" value="${i.price}"><span>₸</span></label>
-      <div class="mi-mv"><button data-mv="${i.id}" data-d="-1" ${first ? 'disabled' : ''} aria-label="Выше">↑</button><button data-mv="${i.id}" data-d="1" ${last ? 'disabled' : ''} aria-label="Ниже">↓</button></div>` : `<b class="mi-pr">${money(i.price)}</b>`}
+      <div class="mi-mv"><button data-mv="${i.id}" data-d="-1" ${first ? 'disabled' : ''} aria-label="Выше">↑</button><button data-mv="${i.id}" data-d="1" ${last ? 'disabled' : ''} aria-label="Ниже">↓</button><button class="mi-del" data-idelrow="${i.id}" title="Удалить блюдо" aria-label="Удалить">🗑</button></div>` : `<b class="mi-pr">${money(i.price)}</b>`}
     <button class="sw ${i.stop ? '' : 'on'}" data-stop="${i.id}" title="${i.stop ? 'В стоп-листе' : 'В наличии'}" aria-label="В наличии"></button></div>`;
 }
 
@@ -213,19 +253,27 @@ function resize(file, max, q = 0.84) {
     }; img.onerror = () => res(null); img.src = URL.createObjectURL(file);
   });
 }
-async function uploadPhoto(file) {
+// sizes: 'both' (фото + миниатюра), 'big' (только крупное), 'small' (только миниатюра)
+async function uploadPhoto(file, sizes = 'both') {
   if (!file) return null;
   toast('Загружаю фото…');
-  const [big, small] = await Promise.all([resize(file, 1600), resize(file, 520, 0.8)]);
-  if (!big) { toast('Не удалось прочитать фото. Попробуйте JPG или PNG.'); return null; }
-  const a = await api('/api/admin/upload', { method: 'POST', body: big });
-  const b = small ? await api('/api/admin/upload', { method: 'POST', body: small }) : a;
-  return { photo: a.url, thumb: b.url };
+  const out = {};
+  if (sizes !== 'small') { const big = await resize(file, 1600); if (!big) { toast('Не удалось прочитать фото. Попробуйте JPG или PNG.'); return null; } out.photo = (await api('/api/admin/upload', { method: 'POST', body: big })).url; }
+  if (sizes !== 'big') { const small = await resize(file, 520, 0.8); if (!small) { toast('Не удалось прочитать фото.'); return null; } out.thumb = (await api('/api/admin/upload', { method: 'POST', body: small })).url; }
+  return out;
 }
 async function saveContent(part, msg = 'Сохранено ✓') {
-  await api('/api/admin/content', { method: 'PUT', body: part });
-  dirty = false; toast(msg);
+  try {
+    const r = await api('/api/admin/content', { method: 'PUT', body: { ...part, ver: S.ver } });
+    S.ver = r.ver; dirty = false; staleBanner = false; toast(msg);
+  } catch (e) {
+    if (/другой администратор/.test(e.message)) { dirty = false; sheetClose(); await load(); rerender(true); }
+    throw e;
+  }
 }
+// Блюда сохраняем по одному — так правки разных людей и стоп-лист официантов не затирают друг друга
+const itemApi = (id, body, method = 'PATCH') => api(`/api/admin/items/${id}`, { method, body });
+function putItem(it) { const i = S.items.findIndex(x => x.id === it.id); if (i >= 0) S.items[i] = it; else S.items.push(it); }
 
 // ---------- карточка блюда ----------
 function sheetOpen(title, body, foot) {
@@ -237,7 +285,7 @@ function sheetClose() { $('#sheet-root').innerHTML = ''; $('#sheet-root').onclic
 
 function editItem(id, presetCat) {
   const src = id ? S.items.find(i => i.id === id) : { id: '', cat: presetCat || S.categories[0].id, name: '', nameKk: '', desc: '', descKk: '', price: 0, tags: [], photo: '', thumb: '', stop: false, hidden: false };
-  const d = JSON.parse(JSON.stringify(src)); d.tags ||= [];
+  const d = JSON.parse(JSON.stringify(src)); d.tags ||= []; const stop0 = !!src.stop;
   const photoBlock = () => `<div class="ph-edit">${d.photo ? `<img src="${esc(d.photo)}" alt="">` : '<div class="ph-empty">Фото нет<br><small>гости охотнее заказывают блюда с фото</small></div>'}
       <div class="ph-acts"><button class="btn btn-gold btn-sm" data-iphoto>${d.photo ? 'Заменить фото' : 'Загрузить фото'}</button>${d.photo ? '<button class="btn btn-line btn-sm" data-iphotodel>Убрать фото</button>' : ''}</div></div>`;
   const el = sheetOpen(id ? 'Блюдо' : 'Новое блюдо', `
@@ -269,25 +317,30 @@ function editItem(id, presetCat) {
     try {
       if (bd.etag) { const k = bd.etag; d.tags = d.tags.includes(k) ? d.tags.filter(x => x !== k) : [...d.tags, k]; b.classList.toggle('on'); }
       if (bd.iphoto !== undefined) { const [f] = await pickFiles(); const r = await uploadPhoto(f); if (r) { Object.assign(d, r); $('#phb').innerHTML = photoBlock();
-        if (id) { const cur = S.items.find(i => i.id === id); Object.assign(cur, r); await saveContent({ items: S.items }, 'Фото сохранено ✓'); rerender(); }
+        if (id) { putItem(await itemApi(id, r)); toast('Фото сохранено ✓'); rerender(); }
         else toast('Фото загружено — нажмите «Сохранить»'); } }
       if (bd.iphotodel !== undefined) { d.photo = ''; d.thumb = ''; $('#phb').innerHTML = photoBlock();
-        if (id) { Object.assign(S.items.find(i => i.id === id), { photo: '', thumb: '' }); await saveContent({ items: S.items }, 'Фото убрано'); rerender(); } }
+        if (id) { putItem(await itemApi(id, { photo: '', thumb: '' })); toast('Фото убрано'); rerender(); } }
       if (bd.isave !== undefined) {
         collect(); const old = +$('#e-old').value; if (old > d.price) d.oldPrice = old; else delete d.oldPrice;
         if (!d.name) return toast('Введите название');
         if (!d.price) return toast('Укажите цену');
-        if (!id) { d.id = d.cat + Date.now().toString(36); S.items.push(d); } else S.items[S.items.findIndex(i => i.id === id)] = d;
-        await saveContent({ items: S.items }); sheetClose(); rerender();
+        const body = { name: d.name, nameKk: d.nameKk, desc: d.desc, descKk: d.descKk, price: d.price, oldPrice: d.oldPrice || 0, cat: d.cat, tags: d.tags, photo: d.photo, thumb: d.thumb, hidden: d.hidden };
+        if (d.stop !== stop0) body.stop = d.stop; // стоп-лист отправляем, только если его меняли здесь
+        if (!id) { const it = await api('/api/admin/items', { method: 'POST', body: { ...body, stop: d.stop } }); putItem(it); }
+        else putItem(await itemApi(id, body));
+        toast('Сохранено ✓'); sheetClose(); rerender();
       }
       if (bd.idup !== undefined) {
-        collect(); const copy = { ...JSON.parse(JSON.stringify(d)), id: d.cat + Date.now().toString(36), name: d.name + ' (копия)' };
-        S.items.splice(S.items.findIndex(i => i.id === id) + 1, 0, copy); await saveContent({ items: S.items }, 'Копия создана'); sheetClose(); rerender(); editItem(copy.id);
+        collect();
+        const copy = await api('/api/admin/items', { method: 'POST', body: { ...d, id: undefined, name: d.name + ' (копия)', after: id } });
+        S.items.splice(S.items.findIndex(i => i.id === id) + 1, 0, copy); toast('Копия создана'); sheetClose(); rerender(); editItem(copy.id);
       }
       if (bd.idel !== undefined) {
         if (bd.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Точно удалить? Ещё раз'; return; }
+        await itemApi(id, undefined, 'DELETE');
         S.items = S.items.filter(i => i.id !== id); for (const k in S.pairs) S.pairs[k] = S.pairs[k].filter(x => x !== id);
-        await saveContent({ items: S.items, pairs: S.pairs }, 'Блюдо удалено'); sheetClose(); rerender();
+        toast('Блюдо удалено'); sheetClose(); rerender();
       }
     } catch (err) { toast(err.message); }
   };
@@ -335,9 +388,11 @@ function editCats() {
     if (bd.cpair) pickPairs(bd.cpair, pairs, draw);
     if (bd.csave !== undefined) {
       if (cats.some(c => !c.name.trim())) return toast('У каждой категории должно быть название');
-      for (const it of S.items) if (moves[it.cat]) it.cat = moves[it.cat];
-      S.categories = cats; S.pairs = pairs;
-      try { await saveContent({ categories: cats, pairs, items: S.items }); sheetClose(); rerender(); } catch (err) { toast(err.message); }
+      try {
+        await saveContent({ categories: cats, pairs, moves });
+        for (const it of S.items) if (moves[it.cat]) it.cat = moves[it.cat];
+        S.categories = cats; S.pairs = pairs; sheetClose(); rerender();
+      } catch (err) { toast(err.message); }
     }
   };
 }
@@ -475,12 +530,15 @@ function qrSvg(text) {
   const q = qrcode(0, 'M'); q.addData(text); q.make();
   return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }).replace('<svg ', '<svg class="q" ');
 }
+let qrKeys = null;
+async function loadQrKeys() { try { qrKeys = await api('/api/staff/qr-keys'); if (tab === 'qr') rerender(true); } catch {} }
 function qrView() {
+  if (!qrKeys) { loadQrKeys(); return '<p class="note">Готовлю QR-коды…</p>'; }
   const n = +S.settings.tables || 20, origin = location.origin;
   return `<div class="noprint toolbar"><p class="note" style="margin:0;flex:1">Распечатайте и поставьте на каждый стол. Гость сканирует → открывается меню этого стола: заказ, вызов официанта, счёт и Kaspi. Количество столов меняется в «Настройках».</p>
       <button class="btn btn-gold btn-sm" onclick="print()">🖨 Печать</button></div>
     <div class="qrgrid">${Array.from({ length: n }, (_, i) => i + 1).map(t => `<div class="qrcard"><h5>ALTYN</h5><div class="note">Меню · заказ · официант · Kaspi</div>
-      ${qrSvg(`${origin}/t/${t}`)}<div class="tn">Стол ${t}</div><div class="note">${origin.replace(/^https?:\/\//, '')}/t/${t}</div></div>`).join('')}
+      ${qrSvg(`${origin}/t/${t}?k=${qrKeys[t] || ''}`)}<div class="tn">Стол ${t}</div><div class="note">${origin.replace(/^https?:\/\//, '')}/t/${t}</div></div>`).join('')}
       <div class="qrcard"><h5>ALTYN</h5><div class="note">Меню и бронь онлайн (вход, Instagram, визитки)</div>${qrSvg(`${origin}/`)}<div class="tn" style="font-size:20px">Сайт</div><div class="note">${origin.replace(/^https?:\/\//, '')}</div></div></div>`;
 }
 
@@ -516,7 +574,8 @@ const VIEWS = { live: liveView, bookings: bookingsView, menu: menuView, home: ho
 const FORM_TABS = ['home', 'halls', 'settings', 'gallery'];
 function rerender(force) {
   if (!S) return;
-  if (!force && dirty && FORM_TABS.includes(tab)) { const h = $('header.st-h'); if (h) h.outerHTML = header(); return; }
+  const typing = document.activeElement?.closest?.('.main') && document.activeElement.matches('input:not([type=checkbox]),textarea,select') && document.activeElement.id !== 'mq';
+  if (!force && ((dirty && FORM_TABS.includes(tab)) || typing)) { const h = $('header.st-h'); if (h) h.outerHTML = header(); return; }
   const y = scrollY, a = document.activeElement, focusId = a?.id, pos = a?.selectionStart;
   $('#app').innerHTML = header() + `<div class="main">${(VIEWS[tab] || liveView)()}</div>`;
   scrollTo(0, y);
@@ -535,7 +594,7 @@ document.addEventListener('change', async e => {
     if (el.dataset.price) {
       const it = S.items.find(i => i.id === el.dataset.price), v = +el.value;
       if (!v || v < 0) { el.value = it.price; return toast('Неверная цена'); }
-      it.price = v; await saveContent({ items: S.items }, `${it.name}: ${money(v)} ✓`); return;
+      putItem(await itemApi(it.id, { price: v })); el.blur(); toast(`${it.name}: ${money(v)} ✓`); return;
     }
     if (el.dataset.gcap !== undefined) { S.gallery[+el.dataset.gcap].caption = el.value.trim(); await saveContent({ gallery: S.gallery }, 'Подпись сохранена'); return; }
     if (FORM_TABS.includes(tab) && el.closest('.main')) dirty = true;
@@ -548,7 +607,7 @@ document.addEventListener('click', async e => {
   try {
     if (d.tab) {
       if (dirty && FORM_TABS.includes(tab) && d.sure !== '1') { el.dataset.sure = '1'; return toast('Есть несохранённые изменения. Нажмите вкладку ещё раз, чтобы уйти без сохранения'); }
-      dirty = false; tab = d.tab; localStorage.setItem('altyn.staff.tab', tab); scrollTo(0, 0); return rerender(true);
+      dirty = false; tab = d.tab; localStorage.setItem('altyn.staff.tab', tab); scrollTo(0, 0); keepAwake(); if (tab === 'qr') loadQrKeys(); return rerender(true);
     }
     if (d.logout !== undefined) { await fetch('/api/logout'); S = null; return renderLogin(); }
     if (d.notif !== undefined) { await Notification.requestPermission(); beep(); return rerender(); }
@@ -556,28 +615,40 @@ document.addEventListener('click', async e => {
     if (d.calldone) return void await api(`/api/staff/calls/${d.calldone}`, { method: 'PATCH', body: {} });
     if (d.ost) return void await api(`/api/staff/orders/${d.ost}`, { method: 'PATCH', body: { status: d.to } });
     if (d.paytable) {
-      const method = d.paymethod || await pickPay(`Стол ${d.paytable}: как оплатили?`); if (!method) return;
-      const r = await api(`/api/staff/table/${encodeURIComponent(d.paytable)}/pay`, { method: 'POST', body: { pay: method } }); return toast(`Стол ${d.paytable} закрыт (${r.closed} заказ.)`);
+      const t = d.paytable, served = S.orders.filter(o => o.type === 'table' && o.table === t && o.pay === 'unpaid' && o.status === 'served');
+      const pending = S.orders.filter(o => o.type === 'table' && o.table === t && ['new', 'accepted', 'cooking'].includes(o.status));
+      const sum = served.reduce((a, o) => a + o.total, 0);
+      const method = await pickPay(`Стол ${t}: закрыть счёт`, `${served.length ? `Поданные заказы: ${served.map(o => '№' + o.no).join(', ')} — <b>${money(sum)}</b>.` : 'Поданных неоплаченных заказов нет (могли быть заказы у официанта — закрываем только вызовы).'}
+        ${pending.length ? `<br>⚠️ Ещё готовятся: ${pending.map(o => '№' + o.no).join(', ')} — они останутся на доске.` : ''}
+        ${d.paymethod === 'kaspi' ? '<br><b>Гость нажал «Я оплатил» — проверьте поступление в Kaspi Pay, прежде чем закрывать.</b>' : ''}`, d.paymethod); if (!method) return;
+      const r = await api(`/api/staff/table/${encodeURIComponent(t)}/pay`, { method: 'POST', body: { pay: method } });
+      return toast(`Стол ${t} закрыт: ${r.closed} заказ. на ${money(r.total)}${r.pending ? ` · ещё готовятся: ${r.pending}` : ''}`);
     }
+    if (d.reload !== undefined) { staleBanner = false; dirty = false; await load(); return rerender(true); }
     if (d.bst) return void await api(`/api/staff/bookings/${d.bst}`, { method: 'PATCH', body: { status: d.to } });
     // меню
     if (d.stop) { const r = await api(`/api/staff/items/${d.stop}/stop`, { method: 'POST' }); return toast(r.stop ? `«${r.name}» — в стоп-листе` : `«${r.name}» снова в наличии`); }
     if (d.edit) return editItem(d.edit);
     if (d.newitem !== undefined) return editItem(null, d.newitem);
+    if (d.idelrow) {
+      const it = S.items.find(i => i.id === d.idelrow);
+      if (d.sure !== '1') { el.dataset.sure = '1'; el.classList.add('armed'); el.textContent = 'Удалить?'; toast(`Нажмите ещё раз, чтобы удалить «${it.name}»`); setTimeout(() => { if (el.isConnected) { el.dataset.sure = ''; el.classList.remove('armed'); el.textContent = '🗑'; } }, 4000); return; }
+      await itemApi(d.idelrow, undefined, 'DELETE');
+      S.items = S.items.filter(i => i.id !== d.idelrow); for (const k in S.pairs || {}) S.pairs[k] = S.pairs[k].filter(x => x !== d.idelrow);
+      rerender(); toast(`«${it.name}» удалено`); return;
+    }
     if (d.cats !== undefined) return editCats();
     if (d.mv) {
-      const i = S.items.findIndex(x => x.id === d.mv), cat = S.items[i].cat, dir = +d.d;
-      let j = i + dir; while (j >= 0 && j < S.items.length && S.items[j].cat !== cat) j += dir;
-      if (j < 0 || j >= S.items.length) return;
-      [S.items[i], S.items[j]] = [S.items[j], S.items[i]]; rerender(); await saveContent({ items: S.items }, 'Порядок сохранён'); return;
+      const r = await api(`/api/admin/items/${d.mv}/move`, { method: 'POST', body: { dir: +d.d } });
+      S.items.sort((a, b) => r.order.indexOf(a.id) - r.order.indexOf(b.id)); rerender(); return;
     }
     // главная
-    if (d.herophoto !== undefined) { const [f] = await pickFiles(); const r = await uploadPhoto(f); if (!r) return; collectHome(); S.settings.home.heroPhoto = r.photo; await saveContent({ settings: S.settings }, 'Главное фото обновлено'); return rerender(true); }
+    if (d.herophoto !== undefined) { const [f] = await pickFiles(); const r = await uploadPhoto(f, 'big'); if (!r) return; collectHome(); S.settings.home.heroPhoto = r.photo; await saveContent({ settings: S.settings }, 'Главное фото обновлено'); return rerender(true); }
     if (d.hfadd !== undefined) { collectHome(); S.settings.home.features.push({ n: '★', t: 'Заголовок', p: 'Текст' }); dirty = true; return rerender(true); }
     if (d.hfdel) { collectHome(); S.settings.home.features.splice(+d.hfdel, 1); dirty = true; return rerender(true); }
     if (d.homesave !== undefined) { collectHome(); await saveContent({ settings: S.settings }, 'Главная сохранена ✓'); return rerender(true); }
     // залы
-    if (d.hphoto) { const [f] = await pickFiles(); const r = await uploadPhoto(f); if (!r) return; collectHalls(); S.halls[+d.hphoto].photo = r.photo; await saveContent({ halls: S.halls }, 'Фото зала обновлено'); return rerender(true); }
+    if (d.hphoto) { const [f] = await pickFiles(); const r = await uploadPhoto(f, 'big'); if (!r) return; collectHalls(); S.halls[+d.hphoto].photo = r.photo; await saveContent({ halls: S.halls }, 'Фото зала обновлено'); return rerender(true); }
     if (d.hmv) { collectHalls(); const i = +d.hmv, j = i + +d.d; [S.halls[i], S.halls[j]] = [S.halls[j], S.halls[i]]; dirty = true; return rerender(true); }
     if (d.hadd !== undefined) { collectHalls(); S.halls.push({ id: 'h' + Date.now().toString(36), name: 'Новый зал', kind: 'vip', capacity: 0, desc: '', photo: '/img/gis/hall-2.jpg' }); dirty = true; rerender(true); return scrollTo(0, document.body.scrollHeight); }
     if (d.hdel) { if (d.sure !== '1') { el.dataset.sure = '1'; el.textContent = 'Точно удалить?'; return; } collectHalls(); S.halls.splice(+d.hdel, 1); dirty = true; return rerender(true); }
@@ -592,7 +663,7 @@ document.addEventListener('click', async e => {
       } finally { dirty = false; rerender(true); }
       return;
     }
-    if (d.gcover) { const [f] = await pickFiles(); const r = await uploadPhoto(f); if (!r) return; S.gallery[+d.gcover].cover = r.thumb; await saveContent({ gallery: S.gallery }, 'Обложка обновлена'); return rerender(true); }
+    if (d.gcover) { const [f] = await pickFiles(); const r = await uploadPhoto(f, 'small'); if (!r) return; S.gallery[+d.gcover].cover = r.thumb; await saveContent({ gallery: S.gallery }, 'Обложка обновлена'); return rerender(true); }
     if (d.photoadd !== undefined) {
       const files = await pickFiles(true); let n = 0;
       for (const f of files) { const r = await uploadPhoto(f); if (r) { S.gallery.push({ type: 'photo', src: r.photo, thumb: r.thumb }); n++; } }
@@ -612,9 +683,9 @@ document.addEventListener('click', async e => {
       box.insertAdjacentHTML('beforeend', `<div style="grid-column:1/-1"><textarea rows="2" style="width:100%" placeholder="Ответ от ресторана (будет виден на сайте)">${esc(r.reply || '')}</textarea><button class="btn btn-gold btn-xs" data-rvsave="${r.id}">Сохранить ответ</button></div>`); return; }
     if (d.rvsave) { const txt = $('textarea', el.parentElement).value; await api(`/api/admin/reviews/${d.rvsave}`, { method: 'PATCH', body: { reply: txt } }); S.reviews.find(r => r.id === d.rvsave).reply = txt; return rerender(); }
     // настройки
-    if (d.kaspiqr !== undefined) { const [f] = await pickFiles(); const r = await uploadPhoto(f); if (!r) return; S.settings.kaspi ||= {}; S.settings.kaspi.qr = r.photo; await saveContent({ settings: S.settings }, 'Kaspi QR загружен ✓'); return rerender(true); }
+    if (d.kaspiqr !== undefined) { const [f] = await pickFiles(); const r = await uploadPhoto(f, 'big'); if (!r) return; S.settings.kaspi ||= {}; S.settings.kaspi.qr = r.photo; await saveContent({ settings: S.settings }, 'Kaspi QR загружен ✓'); return rerender(true); }
     if (d.kaspidel !== undefined) { S.settings.kaspi.qr = ''; await saveContent({ settings: S.settings }, 'QR убран'); return rerender(true); }
-    if (d.savesettings !== undefined) {
+    if (d.savesettings !== undefined) { qrKeys = null;
       const s = S.settings;
       $$('[data-set]').forEach(i => setPath(s, i.dataset.set, i.type === 'number' ? +i.value || 0 : i.value.trim()));
       $$('[data-setb]').forEach(i => setPath(s, i.dataset.setb, i.checked));
@@ -624,10 +695,11 @@ document.addEventListener('click', async e => {
 });
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 
-function pickPay(title) {
+function pickPay(title, info = '', preset = '') {
   return new Promise(res => {
     const root = $('#sheet-root');
     root.innerHTML = `<div class="ov"><div class="sheet"><div class="sh-h"><h3>${esc(title)}</h3><button class="x" data-p="">×</button></div>
+      ${info ? `<div class="sh-b"><p>${info}</p><p class="note">Как оплатили?</p></div>` : ''}
       <div class="sh-f"><button class="btn btn-block" style="background:#f14635;color:#fff" data-p="kaspi">Kaspi</button><button class="btn btn-dark btn-block" data-p="card">Карта</button><button class="btn btn-line btn-block" data-p="cash">Наличные</button></div></div></div>`;
     root.onclick = e => { const b = e.target.closest('[data-p]'); if (!b && e.target.matches('.ov')) { sheetClose(); return res(''); } if (b) { sheetClose(); res(b.dataset.p); } };
   });
@@ -635,7 +707,7 @@ function pickPay(title) {
 
 async function boot() {
   try { await load(); } catch { return renderLogin(); }
-  rerender(true); stream();
+  rerender(true); stream(); keepAwake(); if (tab === 'qr') loadQrKeys();
   setInterval(() => { if (tab === 'live' && !document.activeElement?.matches('select') && !$('#sheet-root').innerHTML) rerender(); }, 30000);
 }
 boot();

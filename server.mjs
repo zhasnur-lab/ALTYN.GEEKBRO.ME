@@ -11,43 +11,101 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUB = path.join(ROOT, 'public');
 const DATA = path.join(ROOT, 'data');
 const UPL = path.join(DATA, 'uploads');
+const BAK = path.join(DATA, 'backups');
+const ARCH = path.join(DATA, 'archive');
 const DB_FILE = path.join(DATA, 'db.json');
 const PORT = +process.env.PORT || 4326;
 const SECRET = process.env.SECRET || 'dev-secret';
 const PASS = { admin: process.env.ADMIN_PASS || 'admin', staff: process.env.STAFF_PASS || '1234' };
 
-fs.mkdirSync(UPL, { recursive: true });
+for (const d of [UPL, BAK, ARCH]) fs.mkdirSync(d, { recursive: true });
 
 // ---------- DB ----------
-let db = JSON.parse(fs.readFileSync(fs.existsSync(DB_FILE) ? DB_FILE : path.join(ROOT, 'seed.json'), 'utf8'));
-for (const k of ['orders', 'calls', 'bookings', 'reviews', 'feedback']) db[k] ||= [];
+function loadDb() {
+  if (!fs.existsSync(DB_FILE)) return JSON.parse(fs.readFileSync(path.join(ROOT, 'seed.json'), 'utf8'));
+  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
+  catch (e) {
+    // Повреждённый db.json — поднимаемся с последней резервной копии, битый файл сохраняем рядом
+    console.error('db.json повреждён:', e.message);
+    fs.copyFileSync(DB_FILE, DB_FILE + '.broken-' + Date.now());
+    const last = fs.readdirSync(BAK).filter(f => f.endsWith('.json')).sort().pop();
+    if (!last) throw e;
+    console.error('восстановлено из', last);
+    return JSON.parse(fs.readFileSync(path.join(BAK, last), 'utf8'));
+  }
+}
+let db = loadDb();
+for (const k of ['orders', 'calls', 'bookings', 'reviews']) db[k] ||= [];
 // Миграции: добавляем новые поля из seed, не трогая то, что уже отредактировано
 (function migrate() {
   const seed = JSON.parse(fs.readFileSync(path.join(ROOT, 'seed.json'), 'utf8'));
   db.settings ||= {};
   for (const [k, v] of Object.entries(seed.settings)) if (db.settings[k] === undefined) db.settings[k] = v;
   db.pairs ||= seed.pairs || {};
-  for (const it of db.items || []) if (it.photo && !it.thumb && it.photo.startsWith('/img/gis/')) it.thumb = it.photo.replace(/\.jpg$/, '.sm.jpg');
+  db.ver ||= {};
+  const kk = Object.fromEntries(seed.items.filter(i => i.nameKk).map(i => [i.id, i.nameKk]));
+  for (const it of db.items || []) {
+    if (it.photo && !it.thumb && it.photo.startsWith('/img/gis/')) it.thumb = it.photo.replace(/\.jpg$/, '.sm.jpg');
+    if (!it.nameKk && kk[it.id] && seed.items.find(s => s.id === it.id)?.name === it.name) it.nameKk = kk[it.id];
+  }
 })();
 let saveTimer = null;
 function save() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     const tmp = DB_FILE + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(db, null, 1));
+    const fd = fs.openSync(tmp, 'w');
+    fs.writeSync(fd, JSON.stringify(db)); fs.fsyncSync(fd); fs.closeSync(fd);
     fs.renameSync(tmp, DB_FILE);
   }, 150);
 }
-function backup() {
-  const dir = path.join(DATA, 'backups'); fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, `db-${new Date().toISOString().slice(0, 10)}.json`), JSON.stringify(db));
+// Резервные копии: с датой и временем, храним 60 последних (≈ 2 недели при копии каждые 6 ч + копии перед правками)
+function backup(reason = 'auto') {
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  fs.writeFileSync(path.join(BAK, `db-${stamp}-${reason}.json`), JSON.stringify(db));
+  const files = fs.readdirSync(BAK).filter(f => f.endsWith('.json')).sort();
+  for (const f of files.slice(0, Math.max(0, files.length - 60))) fs.unlinkSync(path.join(BAK, f));
 }
-backup(); setInterval(backup, 6 * 3600e3);
-save();
+let lastEditBackup = 0;
+function backupBeforeEdit() { if (Date.now() - lastEditBackup > 10 * 60e3) { lastEditBackup = Date.now(); backup('edit'); } }
+
+// Архив: закрытые заказы старше 30 дней → data/archive/orders-YYYY-MM.json; выполненные вызовы старше 7 дней удаляем
+function housekeeping() {
+  const cut = Date.now() - 30 * 864e5, keep = [], byMonth = {};
+  for (const o of db.orders) {
+    if (['closed', 'cancelled'].includes(o.status) && Date.parse(o.updated) < cut) (byMonth[o.created.slice(0, 7)] ||= []).push(o);
+    else keep.push(o);
+  }
+  for (const [mo, list] of Object.entries(byMonth)) {
+    const f = path.join(ARCH, `orders-${mo}.json`);
+    const prev = fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : [];
+    fs.writeFileSync(f, JSON.stringify(prev.concat(list)));
+  }
+  db.orders = keep;
+  db.calls = db.calls.filter(c => c.status === 'open' || Date.parse(c.created) > Date.now() - 7 * 864e5);
+  db.bookings = db.bookings.filter(b => b.date >= new Date(Date.now() - 180 * 864e5).toISOString().slice(0, 10));
+  // Фото, на которые больше ничего не ссылается (заменённые/удалённые), удаляем через 2 дня
+  const refs = JSON.stringify([db.settings, db.halls, db.items, db.gallery, db.categories]);
+  for (const f of fs.readdirSync(UPL)) {
+    const st = fs.statSync(path.join(UPL, f));
+    if (!refs.includes('/uploads/' + f) && Date.now() - st.mtimeMs > 2 * 864e5) fs.unlinkSync(path.join(UPL, f));
+  }
+  save();
+}
+backup('start'); housekeeping();
+setInterval(() => { backup('auto'); housekeeping(); }, 6 * 3600e3);
 
 const id = (p = '') => p + crypto.randomBytes(5).toString('hex');
 const now = () => new Date().toISOString();
 const PUBLIC_KEYS = ['settings', 'halls', 'categories', 'items', 'pairs', 'gallery'];
+const bump = k => { db.ver[k] = (db.ver[k] || 0) + 1; };
+
+// ---------- ключи столов: QR ведёт на /t/5?k=…, без ключа заказать/позвать нельзя ----------
+const tableKey = t => crypto.createHmac('sha256', SECRET).update('table:' + t).digest('base64url').slice(0, 6);
+function tableOk(t, k) {
+  const n = +t;
+  return /^\d{1,3}$/.test(String(t)) && n >= 1 && n <= (+db.settings.tables || 20) && k === tableKey(String(n));
+}
 
 // ---------- SSE для персонала ----------
 const clients = new Set();
@@ -73,15 +131,15 @@ function roleOf(req) {
   return role;
 }
 
-// ---------- rate limit (публичные POST) ----------
+// ---------- лимиты: отдельно по каждому действию (весь Wi-Fi ресторана — это один IP) ----------
 const hits = new Map();
-function limited(req, max = 20) {
-  const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-  const t = Date.now(), arr = (hits.get(ip) || []).filter(x => t - x < 60e3);
-  arr.push(t); hits.set(ip, arr);
+const ipOf = req => req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+function limited(key, max, windowMs = 60e3) {
+  const t = Date.now(), arr = (hits.get(key) || []).filter(x => t - x < windowMs);
+  arr.push(t); hits.set(key, arr);
   return arr.length > max;
 }
-setInterval(() => hits.clear(), 10 * 60e3);
+setInterval(() => { const t = Date.now(); for (const [k, a] of hits) if (!a.some(x => t - x < 15 * 60e3)) hits.delete(k); }, 10 * 60e3);
 
 // ---------- helpers ----------
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -113,73 +171,96 @@ function serveFile(res, file, cache) {
   });
 }
 
+const pubReview = r => ({ id: r.id, name: r.name, rating: r.rating, text: r.text, created: r.created, source: r.source, reply: r.reply });
 function publicData() {
   const out = {};
   for (const k of PUBLIC_KEYS) out[k] = db[k];
-  out.reviews = db.reviews.filter(r => r.approved).slice(-40).reverse();
+  out.reviews = db.reviews.filter(r => r.approved && r.text).slice(-40).reverse().map(pubReview);
   return out;
 }
-function orderTotal(items) { return items.reduce((s, x) => s + x.price * x.qty, 0); }
+const orderTotal = items => items.reduce((s, x) => s + x.price * x.qty, 0);
+const catHidden = catId => !!db.categories.find(c => c.id === catId)?.hidden;
+
+// Поля блюда, которые можно менять из админки
+const ITEM_FIELDS = { name: v => str(v, 120), nameKk: v => str(v, 120), desc: v => str(v, 600), descKk: v => str(v, 600),
+  price: v => Math.max(0, Math.round(+v || 0)), cat: v => str(v, 40), photo: v => str(v, 300), thumb: v => str(v, 300),
+  tags: v => Array.isArray(v) ? v.map(x => str(x, 20)).slice(0, 8) : [], hidden: v => !!v, stop: v => !!v };
+function applyItem(it, b) {
+  for (const [k, f] of Object.entries(ITEM_FIELDS)) if (b[k] !== undefined) it[k] = f(b[k]);
+  if (b.oldPrice !== undefined) { const o = Math.round(+b.oldPrice || 0); if (o > it.price) it.oldPrice = o; else delete it.oldPrice; }
+  if (!db.categories.some(c => c.id === it.cat)) it.cat = db.categories[0]?.id;
+}
 
 // ---------- routes ----------
 async function api(req, res, url) {
   const p = url.pathname, m = req.method;
-  const role = roleOf(req);
+  const role = roleOf(req), ip = ipOf(req);
   let mm;
+
+  // Запросы, меняющие данные, принимаем только со своего сайта (защита от CSRF с соседних *.geekbro.me)
+  if (m !== 'GET' && req.headers.origin) {
+    let host = ''; try { host = new URL(req.headers.origin).host; } catch {}
+    if (host !== req.headers.host) return send(res, 403, { error: 'forbidden origin' });
+  }
 
   // --- public ---
   if (p === '/api/data' && m === 'GET') return send(res, 200, publicData());
 
   if (p === '/api/orders' && m === 'POST') {
-    if (limited(req, 10)) return send(res, 429, { error: 'Слишком много запросов, подождите минуту' });
     const b = await json(req);
     const type = ['table', 'pickup', 'delivery'].includes(b.type) ? b.type : 'table';
-    const items = [];
+    const table = type === 'table' ? String(+b.table || '') : '';
+    if (type === 'table' && !tableOk(table, b.k)) return send(res, 403, { error: 'Отсканируйте QR-код на вашем столе, чтобы заказать', code: 'table' });
+    if (limited('ord:' + ip, 60) || (table && limited('ordt:' + table, 8))) return send(res, 429, { error: 'Слишком много заказов подряд, подождите минуту' });
+    if (type === 'pickup' && db.settings.pickup?.enabled === false) return send(res, 400, { error: 'Самовывоз сейчас недоступен' });
+    if (type === 'delivery' && !db.settings.delivery?.enabled) return send(res, 400, { error: 'Доставка сейчас недоступна' });
+    const items = [], gone = [];
     for (const it of (b.items || []).slice(0, 60)) {
       const d = db.items.find(x => x.id === it.id);
       const qty = Math.max(1, Math.min(50, +it.qty | 0));
-      if (!d || d.hidden) continue;
-      if (d.stop) return send(res, 409, { error: `«${d.name}» сейчас нет в наличии` });
-      items.push({ id: d.id, name: d.name, price: d.price, qty, note: str(it.note, 120) });
+      if (!d || d.hidden || catHidden(d.cat)) { gone.push(d?.name || 'позиция'); continue; }
+      if (d.stop) return send(res, 409, { error: `«${d.name}» сейчас нет в наличии — уберите из корзины`, stop: d.id });
+      items.push({ id: d.id, name: d.name, nameKk: d.nameKk || '', price: d.price, qty, note: str(it.note, 120) });
     }
+    if (gone.length) return send(res, 409, { error: `Больше нет в меню: ${gone.join(', ')}. Обновите корзину.`, gone: true });
     if (!items.length) return send(res, 400, { error: 'Корзина пуста' });
-    const table = type === 'table' ? str(b.table, 10) : '';
-    if (type === 'table' && !table) return send(res, 400, { error: 'Не указан стол' });
     const phone = str(b.phone, 30);
     if (type !== 'table' && !phoneOk(phone)) return send(res, 400, { error: 'Укажите телефон' });
     if (type === 'delivery' && !str(b.address)) return send(res, 400, { error: 'Укажите адрес доставки' });
+    const sum = orderTotal(items), minOrder = +db.settings.delivery?.minOrder || 0;
+    if (type === 'delivery' && minOrder && sum < minOrder) return send(res, 400, { error: `Минимальная сумма доставки — ${minOrder} ₸` });
+    const fee = type === 'delivery' ? +db.settings.delivery?.fee || 0 : 0;
     const o = { id: id('o'), no: (db.orderNo = (db.orderNo || 100) + 1), token: id(), type, table, name: str(b.name, 60), phone,
-      address: str(b.address), comment: str(b.comment, 400), items,
-      deliveryFee: type === 'delivery' ? +db.settings.delivery?.fee || 0 : 0,
-      total: orderTotal(items) + (type === 'delivery' ? +db.settings.delivery?.fee || 0 : 0), status: 'new', pay: 'unpaid',
+      address: str(b.address), comment: str(b.comment, 400), items, deliveryFee: fee, total: sum + fee, status: 'new', pay: 'unpaid',
       created: now(), updated: now() };
     db.orders.push(o); save(); broadcast('order', o);
     return send(res, 200, { id: o.id, no: o.no, token: o.token, total: o.total });
   }
-    if ((mm = /^\/api\/orders\/(\w+)$/.exec(p)) && m === 'GET') {
+  if ((mm = /^\/api\/orders\/(\w+)$/.exec(p)) && m === 'GET') {
     const o = db.orders.find(x => x.id === mm[1]);
     if (!o || (o.token !== url.searchParams.get('t') && !role)) return send(res, 404, { error: 'not found' });
-    const { token, phone, ...safe } = o;
+    const { token, phone, address, ...safe } = o;
     return send(res, 200, safe);
   }
 
-  if ((mm = /^\/api\/table\/([\w-]{1,10})\/bill$/.exec(p)) && m === 'GET') {
+  if ((mm = /^\/api\/table\/(\d{1,3})\/bill$/.exec(p)) && m === 'GET') {
+    if (!tableOk(mm[1], url.searchParams.get('k'))) return send(res, 403, { error: 'Отсканируйте QR-код на вашем столе', code: 'table' });
     const orders = db.orders.filter(o => o.type === 'table' && o.table === mm[1] && o.pay === 'unpaid' && !['closed', 'cancelled'].includes(o.status));
     const items = [];
     for (const o of orders) for (const it of o.items) {
       const x = items.find(y => y.id === it.id);
-      if (x) x.qty += it.qty; else items.push({ id: it.id, name: it.name, price: it.price, qty: it.qty });
+      if (x) x.qty += it.qty; else items.push({ id: it.id, name: it.name, nameKk: it.nameKk, price: it.price, qty: it.qty });
     }
     const sum = orderTotal(items), fee = Math.round(sum * (db.settings.serviceFee || 0) / 100);
     return send(res, 200, { table: mm[1], orders: orders.map(o => o.no), items, sum, fee, total: sum + fee });
   }
 
   if (p === '/api/calls' && m === 'POST') {
-    if (limited(req, 12)) return send(res, 429, { error: 'Подождите минуту' });
     const b = await json(req);
     const kind = ['waiter', 'bill', 'paid', 'kaspi'].includes(b.kind) ? b.kind : 'waiter';
-    const table = str(b.table, 10);
-    if (!table) return send(res, 400, { error: 'Не указан стол' });
+    const table = String(+b.table || '');
+    if (!tableOk(table, b.k)) return send(res, 403, { error: 'Отсканируйте QR-код на вашем столе', code: 'table' });
+    if (limited('call:' + ip, 60) || limited('callt:' + table, 6)) return send(res, 429, { error: 'Официант уже получил вызов, подождите минуту' });
     const dup = db.calls.find(c => c.table === table && c.kind === kind && c.status === 'open');
     if (dup) return send(res, 200, { id: dup.id, dup: true });
     const c = { id: id('c'), table, kind, note: str(b.note, 200), amount: +b.amount || 0, status: 'open', created: now() };
@@ -188,7 +269,7 @@ async function api(req, res, url) {
   }
 
   if (p === '/api/bookings' && m === 'POST') {
-    if (limited(req, 6)) return send(res, 429, { error: 'Подождите минуту' });
+    if (limited('book:' + ip, 8)) return send(res, 429, { error: 'Подождите минуту' });
     const b = await json(req);
     const phone = str(b.phone, 30);
     if (!str(b.name) || !phoneOk(phone)) return send(res, 400, { error: 'Укажите имя и телефон' });
@@ -203,19 +284,18 @@ async function api(req, res, url) {
   }
 
   if (p === '/api/reviews' && m === 'POST') {
-    if (limited(req, 4)) return send(res, 429, { error: 'Подождите минуту' });
+    if (limited('rev:' + ip, 20)) return send(res, 429, { error: 'Подождите минуту' });
     const b = await json(req);
     const rating = Math.max(1, Math.min(5, +b.rating | 0));
     const r = { id: id('r'), name: str(b.name, 40) || 'Гость', rating, text: str(b.text, 1000), table: str(b.table, 10),
-      phone: str(b.phone, 30), approved: false, created: now() };
-    if (!r.text && rating >= 4) r.text = '';
+      phone: str(b.phone, 30), private: rating <= 3 || !!b.private, approved: false, source: 'site', created: now() };
     db.reviews.push(r); save(); broadcast('review', r);
     return send(res, 200, { ok: true });
   }
 
   // --- staff auth ---
   if (p === '/api/login' && m === 'POST') {
-    if (limited(req, 8)) return send(res, 429, { error: 'Подождите минуту' });
+    if (limited('login:' + ip, 8)) return send(res, 429, { error: 'Слишком много попыток, подождите минуту' });
     const b = await json(req);
     const pw = str(b.password, 100);
     const r = pw && pw === PASS.admin ? 'admin' : pw && pw === PASS.staff ? 'staff' : null;
@@ -235,14 +315,18 @@ async function api(req, res, url) {
     return;
   }
   if (p === '/api/staff/state' && m === 'GET') {
-    const since = Date.now() - 36 * 3600e3;
+    const t = Date.now();
     return send(res, 200, {
-      role, ...publicData(),
+      role, ...publicData(), ver: db.ver,
       reviews: db.reviews.slice(-200).reverse(),
-      orders: db.orders.filter(o => o.status !== 'closed' || Date.parse(o.updated) > since),
-      calls: db.calls.filter(c => c.status === 'open' || Date.parse(c.created) > since),
-      bookings: db.bookings.filter(b => b.date >= new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10)),
+      orders: db.orders.filter(o => ['closed', 'cancelled'].includes(o.status) ? Date.parse(o.updated) > t - 24 * 3600e3 : Date.parse(o.created) > t - 48 * 3600e3),
+      calls: db.calls.filter(c => (c.status === 'open' && Date.parse(c.created) > t - 12 * 3600e3) || Date.parse(c.created) > t - 12 * 3600e3),
+      bookings: db.bookings.filter(b => b.date >= new Date(t - 2 * 864e5).toISOString().slice(0, 10)),
     });
+  }
+  if (p === '/api/staff/qr-keys' && m === 'GET') {
+    const n = +db.settings.tables || 20;
+    return send(res, 200, Object.fromEntries(Array.from({ length: n }, (_, i) => [i + 1, tableKey(String(i + 1))])));
   }
   if ((mm = /^\/api\/staff\/orders\/(\w+)$/.exec(p)) && m === 'PATCH') {
     const o = db.orders.find(x => x.id === mm[1]); if (!o) return send(res, 404, {});
@@ -265,28 +349,74 @@ async function api(req, res, url) {
     save(); broadcast('booking', bk);
     return send(res, 200, bk);
   }
-  if ((mm = /^\/api\/staff\/table\/([\w-]{1,10})\/pay$/.exec(p)) && m === 'POST') {
+  if ((mm = /^\/api\/staff\/table\/(\d{1,3})\/pay$/.exec(p)) && m === 'POST') {
+    // Закрываем только ПОДАННЫЕ заказы: свежий дозаказ (новый/готовится) остаётся на доске
     const b = await json(req);
     const pay = ['kaspi', 'cash', 'card'].includes(b.pay) ? b.pay : 'cash';
-    const list = db.orders.filter(o => o.type === 'table' && o.table === mm[1] && o.pay === 'unpaid' && o.status !== 'cancelled');
+    const list = db.orders.filter(o => o.type === 'table' && o.table === mm[1] && o.pay === 'unpaid' && o.status === 'served');
+    const pending = db.orders.filter(o => o.type === 'table' && o.table === mm[1] && ['new', 'accepted', 'cooking'].includes(o.status)).length;
     for (const o of list) { o.pay = pay; o.status = 'closed'; o.updated = now(); broadcast('order', o); }
     for (const c of db.calls) if (c.table === mm[1] && c.status === 'open' && ['bill', 'paid', 'kaspi'].includes(c.kind)) { c.status = 'done'; c.done = now(); broadcast('call', c); }
-    save(); return send(res, 200, { closed: list.length });
+    save(); return send(res, 200, { closed: list.length, total: orderTotal(list.flatMap(o => o.items)), pending });
   }
   if ((mm = /^\/api\/staff\/items\/(\w+)\/stop$/.exec(p)) && m === 'POST') {
     const it = db.items.find(x => x.id === mm[1]); if (!it) return send(res, 404, {});
-    it.stop = !it.stop; save(); broadcast('menu', { id: it.id, stop: it.stop });
+    it.stop = !it.stop; save(); broadcast('item', it);
     return send(res, 200, it);
   }
 
   // --- admin only ---
   if (!admin) return send(res, 403, { error: 'Только для администратора' });
+
+  // Блюда — по одному (никто не затирает чужие правки и стоп-лист)
+  if (p === '/api/admin/items' && m === 'POST') {
+    const b = await json(req);
+    const it = { id: str(b.cat, 20).replace(/\W/g, '') + Date.now().toString(36), name: '', price: 0, tags: [], photo: '', thumb: '', stop: false, hidden: false };
+    applyItem(it, b);
+    if (!it.name || !it.price) return send(res, 400, { error: 'Нужны название и цена' });
+    backupBeforeEdit();
+    const after = db.items.findIndex(x => x.id === b.after);
+    let pos = after >= 0 ? after + 1 : -1;
+    if (pos < 0) { const lastInCat = db.items.map(x => x.cat).lastIndexOf(it.cat); pos = lastInCat >= 0 ? lastInCat + 1 : db.items.length; }
+    db.items.splice(pos, 0, it); save(); broadcast('item', it); broadcast('items-order', db.items.map(x => x.id));
+    return send(res, 200, it);
+  }
+  if ((mm = /^\/api\/admin\/items\/(\w+)$/.exec(p)) && (m === 'PATCH' || m === 'DELETE')) {
+    const i = db.items.findIndex(x => x.id === mm[1]); if (i < 0) return send(res, 404, { error: 'Блюдо уже удалено' });
+    backupBeforeEdit();
+    if (m === 'DELETE') {
+      const [it] = db.items.splice(i, 1);
+      for (const k in db.pairs) db.pairs[k] = db.pairs[k].filter(x => x !== it.id);
+      save(); broadcast('item-del', { id: it.id }); return send(res, 200, { ok: 1 });
+    }
+    applyItem(db.items[i], await json(req)); save(); broadcast('item', db.items[i]);
+    return send(res, 200, db.items[i]);
+  }
+  if ((mm = /^\/api\/admin\/items\/(\w+)\/move$/.exec(p)) && m === 'POST') {
+    const b = await json(req), i = db.items.findIndex(x => x.id === mm[1]); if (i < 0) return send(res, 404, {});
+    const dir = b.dir < 0 ? -1 : 1, cat = db.items[i].cat;
+    let j = i + dir; while (j >= 0 && j < db.items.length && db.items[j].cat !== cat) j += dir;
+    if (j >= 0 && j < db.items.length) { [db.items[i], db.items[j]] = [db.items[j], db.items[i]]; save(); broadcast('items-order', db.items.map(x => x.id)); }
+    return send(res, 200, { order: db.items.map(x => x.id) });
+  }
+
+  // Остальное содержимое — целиком, но с проверкой версии: если кто-то успел сохранить раньше — 409
   if (p === '/api/admin/content' && m === 'PUT') {
     const b = await json(req);
-    backup();
-    for (const k of PUBLIC_KEYS) if (b[k] !== undefined) db[k] = b[k];
-    save(); broadcast('content', {});
-    return send(res, 200, { ok: 1 });
+    const keys = ['settings', 'halls', 'categories', 'pairs', 'gallery'].filter(k => b[k] !== undefined);
+    for (const k of keys) {
+      if ((b.ver?.[k] ?? 0) !== (db.ver[k] || 0)) return send(res, 409, { error: 'Эти данные только что изменил другой администратор. Страница обновится — повторите правку.', stale: k });
+      const okType = k === 'settings' || k === 'pairs' ? b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) : Array.isArray(b[k]);
+      if (!okType) return send(res, 400, { error: 'Неверные данные: ' + k });
+    }
+    if (b.categories && !b.categories.length) return send(res, 400, { error: 'Нужна хотя бы одна категория' });
+    backupBeforeEdit();
+    for (const k of keys) { db[k] = b[k]; bump(k); }
+    // перенос блюд из удалённых категорий
+    if (b.moves && typeof b.moves === 'object') for (const it of db.items) if (b.moves[it.cat]) it.cat = b.moves[it.cat];
+    if (b.categories) for (const it of db.items) if (!db.categories.some(c => c.id === it.cat)) it.cat = db.categories[0].id;
+    save(); broadcast('content', { ver: db.ver });
+    return send(res, 200, { ok: 1, ver: db.ver });
   }
   if ((mm = /^\/api\/admin\/reviews\/(\w+)$/.exec(p))) {
     const i = db.reviews.findIndex(x => x.id === mm[1]); if (i < 0) return send(res, 404, {});
@@ -295,9 +425,9 @@ async function api(req, res, url) {
     save(); return send(res, 200, { ok: 1 });
   }
   if (p === '/api/admin/upload' && m === 'POST') {
-    const ext = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'video/mp4': '.mp4' }[req.headers['content-type']];
-    if (!ext) return send(res, 400, { error: 'Только jpg/png/webp/mp4' });
-    const buf = await body(req, 40e6);
+    const ext = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' }[req.headers['content-type']];
+    if (!ext) return send(res, 400, { error: 'Нужна картинка JPG, PNG или WEBP' });
+    const buf = await body(req, 15e6);
     const name = id() + ext;
     fs.writeFileSync(path.join(UPL, name), buf);
     return send(res, 200, { url: '/uploads/' + name });
@@ -336,6 +466,8 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Strict-Transport-Security', 'max-age=15552000');
   try {
     if (url.pathname === '/healthz') return send(res, 200, { ok: 1 });
     if (url.pathname.startsWith('/api/')) return await api(req, res, url);
@@ -349,7 +481,7 @@ const server = http.createServer(async (req, res) => {
     return serveFile(res, file);
   } catch (e) {
     console.error(e);
-    if (!res.headersSent) send(res, e instanceof SyntaxError ? 400 : 500, { error: e instanceof SyntaxError ? 'bad json' : 'server error' });
+    if (!res.headersSent) send(res, e instanceof SyntaxError ? 400 : 500, { error: e instanceof SyntaxError ? 'bad json' : 'Ошибка сервера' });
   }
 });
 server.listen(PORT, '127.0.0.1', () => console.log('ALTYN on :' + PORT));
