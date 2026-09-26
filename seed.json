@@ -1,0 +1,1861 @@
+{
+ "settings": {
+  "name": "ALTYN",
+  "fullName": "Ресторан «ALTYN»",
+  "tagline": "Место для встреч и особых вечеров",
+  "taglineKk": "Кездесулер мен ерекше кештерге арналған орын",
+  "city": "Усть-Каменогорск",
+  "address": "пр. Каныша Сатпаева, 1е",
+  "addressKk": "Қаныш Сәтбаев даңғылы, 1е",
+  "lat": 49.893014,
+  "lon": 82.622248,
+  "phone": "+7 777 250 48 78",
+  "whatsapp": "77772504878",
+  "instagram": "meiramhana_altyn",
+  "gis": "https://2gis.kz/ust-kamenogorsk/firm/70000001109759863",
+  "gisRating": 4.8,
+  "gisReviews": 285,
+  "hours": "12:00 – 00:00",
+  "hoursNote": "ежедневно",
+  "cuisine": "Восточная и европейская кухня",
+  "tables": 20,
+  "serviceFee": 0,
+  "kaspi": {
+   "qr": "",
+   "link": "",
+   "receiver": "ALTYN",
+   "note": "Отсканируйте QR в приложении Kaspi.kz → «Платежи» → Kaspi QR"
+  },
+  "delivery": {
+   "enabled": true,
+   "fee": 1000,
+   "note": "Доставка по городу — 1 000 ₸. По КШТ после 19:00 — бесплатно.",
+   "minOrder": 0
+  },
+  "takeaway": "Маринованный шашлык можно забрать с собой — пожарите дома, на даче или на природе.",
+  "pickup": {
+   "enabled": true,
+   "discount": 0
+  },
+  "home": {
+   "eyebrow": "Мейрамхана · Усть-Каменогорск",
+   "eyebrowKk": "Мейрамхана · Өскемен",
+   "lead": "Восточная и европейская кухня, общий зал на 60 мест и три VIP-зала. Для обеда, семейного ужина, дня рождения и тоя.",
+   "leadKk": "Шығыс және еуропа асханасы, 60 орындық жалпы зал және үш VIP-зал. Түскі ас, отбасылық кеш, туған күн мен той үшін.",
+   "heroPhoto": "/img/gis/hall-3.jpg",
+   "heroCaption": "Светлый зал · тёплая атмосфера",
+   "heroCaptionKk": "Жайлы зал · жылы атмосфера",
+   "features": [
+    {
+     "n": "3",
+     "t": "VIP-зала",
+     "tKk": "VIP-зал",
+     "p": "На 25, 15 и 10 гостей + общий зал на 60 мест",
+     "pKk": "25, 15 және 10 қонаққа + 60 орындық жалпы зал"
+    },
+    {
+     "n": "12–24",
+     "t": "каждый день",
+     "tKk": "күн сайын",
+     "p": "Обеды, ужины и поздние встречи",
+     "pKk": "Түскі ас, кешкі ас, кешкі кездесулер"
+    },
+    {
+     "n": "4.8★",
+     "t": "в 2ГИС",
+     "tKk": "2ГИС-те",
+     "p": "Более 280 оценок гостей",
+     "pKk": "280-нен астам баға"
+    },
+    {
+     "n": "🧸",
+     "t": "Детская зона",
+     "tKk": "Балалар аймағы",
+     "p": "Игровая для маленьких гостей",
+     "pKk": "Кішкентай қонақтарға ойын бөлмесі"
+    }
+   ],
+   "setsTitle": "Сеты для компании",
+   "setsTitleKk": "Компанияға арналған сеттер",
+   "setsText": "Выгодные наборы на 4–10 гостей — плов, шашлыки, напитки.",
+   "setsTextKk": "4–10 қонаққа тиімді жиынтықтар — палау, кәуап, сусындар."
+  },
+  "deposit": "Для банкетов и VIP-залов может потребоваться предоплата — администратор уточнит при подтверждении."
+ },
+ "halls": [
+  {
+   "id": "main",
+   "name": "Общий зал",
+   "nameKk": "Жалпы зал",
+   "kind": "main",
+   "capacity": 60,
+   "desc": "Просторный светлый зал: дерево, плетёные светильники, камин и панорамные окна. Тёплая атмосфера для обеда, семейного ужина и встреч.",
+   "photo": "/img/gis/hall-3.jpg",
+   "photos": [
+    "/img/gis/hall-3.jpg",
+    "/img/gis/hall-7.jpg",
+    "/img/gis/hall-fireplace.jpg",
+    "/img/gis/hall-2.jpg"
+   ]
+  },
+  {
+   "id": "vip-big",
+   "name": "VIP «Большой»",
+   "nameKk": "VIP «Үлкен»",
+   "kind": "vip",
+   "capacity": 25,
+   "desc": "Для весёлой компании и запоминающихся моментов: длинный банкетный стол, люстры и уютная мягкая зона.",
+   "photo": "/img/gis/banquet-hall.jpg"
+  },
+  {
+   "id": "vip-small",
+   "name": "VIP «Малый»",
+   "nameKk": "VIP «Кіші»",
+   "kind": "vip",
+   "capacity": 15,
+   "desc": "Для тех, кто ценит комфорт и приватную атмосферу: тёплые встречи без лишнего шума.",
+   "photo": "/img/gis/banquet-table.jpg"
+  },
+  {
+   "id": "vip-room",
+   "name": "VIP-комната",
+   "nameKk": "VIP-бөлме",
+   "kind": "vip",
+   "capacity": 10,
+   "isNew": true,
+   "desc": "Новинка! Отдельная комната до 10 гостей — для праздников и встреч большой компанией.",
+   "photo": "/img/ig/DcVxXpmMtlb.jpg"
+  }
+ ],
+ "categories": [
+  {
+   "id": "sets",
+   "name": "Сеты и акции",
+   "nameKk": "Сеттер мен акциялар"
+  },
+  {
+   "id": "salad",
+   "name": "Салаты",
+   "nameKk": "Салаттар"
+  },
+  {
+   "id": "starter",
+   "name": "Закуски",
+   "nameKk": "Тіскебасарлар"
+  },
+  {
+   "id": "soup",
+   "name": "Первые блюда",
+   "nameKk": "Бірінші тағамдар"
+  },
+  {
+   "id": "main",
+   "name": "Вторые блюда",
+   "nameKk": "Екінші тағамдар"
+  },
+  {
+   "id": "pasta",
+   "name": "Пасты",
+   "nameKk": "Пасталар"
+  },
+  {
+   "id": "pizza",
+   "name": "Пицца",
+   "nameKk": "Пицца"
+  },
+  {
+   "id": "rolls",
+   "name": "Роллы",
+   "nameKk": "Роллдар"
+  },
+  {
+   "id": "bake",
+   "name": "Выпечка",
+   "nameKk": "Нан мен тоқаш"
+  },
+  {
+   "id": "kids",
+   "name": "Детское меню",
+   "nameKk": "Балалар мәзірі"
+  },
+  {
+   "id": "side",
+   "name": "Гарниры",
+   "nameKk": "Гарнирлер"
+  },
+  {
+   "id": "sauce",
+   "name": "Соусы",
+   "nameKk": "Тұздықтар"
+  },
+  {
+   "id": "tea",
+   "name": "Чай",
+   "nameKk": "Шай"
+  },
+  {
+   "id": "lemonade",
+   "name": "Лимонады",
+   "nameKk": "Лимонадтар"
+  },
+  {
+   "id": "shake",
+   "name": "Милкшейки",
+   "nameKk": "Милкшейктер"
+  },
+  {
+   "id": "drinks",
+   "name": "Вода и напитки",
+   "nameKk": "Су мен сусындар"
+  }
+ ],
+ "items": [
+  {
+   "id": "sets1",
+   "cat": "sets",
+   "name": "Сет на компанию",
+   "desc": "Плов 2 кг, шашлыки: утка 3 шт. и люля 3 шт., пицца «Маргарита», картофель фри 2 шт., салат «Ачучук» 2 шт., лаваш 4 шт., соус 2 вида, Coca-Cola 2 л",
+   "price": 29990,
+   "oldPrice": 35000,
+   "tags": [
+    "promo"
+   ],
+   "photo": "/img/gis/shashlyk-assorti.jpg",
+   "thumb": "/img/gis/shashlyk-assorti.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "sets2",
+   "cat": "sets",
+   "name": "Сет «Горячий» на 4–5 человек",
+   "desc": "Плов 1,5 кг, шашлык люля 5 шт., лаваш 3 шт., соус 2 вида, Coca-Cola 2 л",
+   "price": 20000,
+   "tags": [
+    "hit"
+   ],
+   "photo": "/img/gis/shashlyk.jpg",
+   "thumb": "/img/gis/shashlyk.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "sets3",
+   "cat": "sets",
+   "name": "Сет «Горячий» на 8–10 человек",
+   "desc": "Плов 2,5 кг, шашлыки: люля 4 шт. и утка 4 шт., лаваш 6 шт., соус 2 вида, Coca-Cola 2 л",
+   "price": 38000,
+   "tags": [],
+   "photo": "/img/gis/banquet-table.jpg",
+   "thumb": "/img/gis/banquet-table.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "salad1",
+   "cat": "salad",
+   "name": "Буратта с томатами",
+   "desc": "Домашняя буратта, томаты, рукола, соус песто, бальзамический соус",
+   "price": 4800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad2",
+   "cat": "salad",
+   "name": "Каприз",
+   "desc": "Язык, яйцо варёное, свежие огурцы, голландский сыр, майонез, зелень",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad3",
+   "cat": "salad",
+   "name": "Язык в соусе",
+   "desc": "Отварной говяжий язык, болгарский перец, огурцы, зелень, соевый соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad4",
+   "cat": "salad",
+   "name": "Цезарь с курицей",
+   "desc": "Куриная грудка, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3000,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad5",
+   "cat": "salad",
+   "name": "Цезарь с сёмгой",
+   "desc": "Сёмга, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad6",
+   "cat": "salad",
+   "name": "Цезарь с креветками",
+   "desc": "Креветки, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad7",
+   "cat": "salad",
+   "name": "Тайский",
+   "desc": "Говядина, помидоры, огурцы, болгарский перец, зелень, соевый соус, чеснок",
+   "price": 3200,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad8",
+   "cat": "salad",
+   "name": "Пикантный",
+   "desc": "Говядина, шампиньоны, картофельные дольки, корнишоны, микс зелени, черри, пикантный соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad9",
+   "cat": "salad",
+   "name": "Оливье с говядиной",
+   "desc": "Говядина, картофель, морковь, яйцо, солёные огурцы, зелёный горошек, зелень, майонез",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad10",
+   "cat": "salad",
+   "name": "Азиатский",
+   "desc": "Говядина, помидоры, огурцы, чеснок, початки кукурузы, зелень, соевый соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad11",
+   "cat": "salad",
+   "name": "Салат с хрустящими баклажанами",
+   "desc": "Обжаренный баклажан, помидоры, рукола, творожный сыр, кисло-сладкий соус",
+   "price": 3000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad12",
+   "cat": "salad",
+   "name": "Греческий",
+   "desc": "Томаты, огурцы, болгарский перец, листья салата, красный лук, фетакса, оливки, прованские травы, оливковое масло",
+   "price": 3000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad13",
+   "cat": "salad",
+   "name": "Ачучук",
+   "desc": "Помидоры, лук, соль, чёрный и красный перец, зелень",
+   "price": 2500,
+   "tags": [
+    "veg",
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad14",
+   "cat": "salad",
+   "name": "Салат из свежих овощей",
+   "desc": "Помидоры, огурцы, лук, зелень",
+   "price": 2500,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter1",
+   "cat": "starter",
+   "name": "Национальное ассорти",
+   "desc": "Жая, казы, язык",
+   "price": 9900,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter2",
+   "cat": "starter",
+   "name": "Рыбное ассорти",
+   "desc": "Сёмга слабосолёная, копчёная скумбрия, саварина, маслины, оливки, зелень, лимон",
+   "price": 9900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter3",
+   "cat": "starter",
+   "name": "Пикантные рулетики из баклажанов",
+   "desc": "Баклажановые рулетики с начинкой из варёной свёклы и творожным сыром",
+   "price": 4000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter4",
+   "cat": "starter",
+   "name": "Кавказское ассорти",
+   "desc": "Помидоры, огурцы, болгарский перец, брынза, редис, зелень",
+   "price": 4000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter5",
+   "cat": "starter",
+   "name": "Крылышки в соусе унаги",
+   "desc": "Куриные крылышки в кисло-сладком соусе",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup1",
+   "cat": "soup",
+   "name": "Чечевичный крем-суп",
+   "desc": "Чечевица, сливки, домашние сухари, лимон",
+   "price": 2500,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup2",
+   "cat": "soup",
+   "name": "Суп-лапша из курицы",
+   "desc": "Куриное мясо, домашняя лапша, лук, морковь, зелень",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup3",
+   "cat": "soup",
+   "name": "Солянка мясная",
+   "desc": "Говядина, язык, копчёная курица, лук, солёные огурцы, томатная паста, маслины, лимон, сметана",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup4",
+   "cat": "soup",
+   "name": "Том-ям с курицей",
+   "desc": "Куриное филе, шампиньоны, помидоры черри, лук",
+   "price": 3500,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup5",
+   "cat": "soup",
+   "name": "Том-ям с сёмгой",
+   "desc": "Сёмга, шампиньоны, помидоры черри, лук",
+   "price": 3800,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup6",
+   "cat": "soup",
+   "name": "Том-ям с морепродуктами",
+   "desc": "",
+   "price": 3800,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup7",
+   "cat": "soup",
+   "name": "Рамен с говядиной",
+   "desc": "Лапша, болгарский перец, грибы, соевый соус, говядина",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup8",
+   "cat": "soup",
+   "name": "Окрошка",
+   "desc": "Картофель, огурцы, яйца, редиска, колбаса, зелень, минеральная вода",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "soup9",
+   "cat": "soup",
+   "name": "Суп с фрикадельками",
+   "desc": "Говяжьи фрикадельки, болгарский перец, лук, морковь, картофель, зелень",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main1",
+   "cat": "main",
+   "name": "Бешбармак из конины",
+   "desc": "Жайма, жая, казы, картофель",
+   "price": 3500,
+   "tags": [
+    "hit",
+    "national"
+   ],
+   "photo": "/img/gis/beshbarmak.jpg",
+   "thumb": "/img/gis/beshbarmak.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main2",
+   "cat": "main",
+   "name": "Бешбармак из говядины",
+   "desc": "Жайма, говядина, казы, картофель",
+   "price": 3500,
+   "tags": [
+    "national"
+   ],
+   "photo": "/img/gis/beshbarmak.jpg",
+   "thumb": "/img/gis/beshbarmak.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main3",
+   "cat": "main",
+   "name": "Плов ташкентский",
+   "desc": "Мясо, рис, нут, лук, морковь",
+   "price": 3500,
+   "tags": [
+    "hit"
+   ],
+   "photo": "/img/gis/plov.jpg",
+   "thumb": "/img/gis/plov.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main4",
+   "cat": "main",
+   "name": "Плов ханский",
+   "desc": "Мясо, рис, нут, лук, морковь, казы",
+   "price": 3800,
+   "tags": [
+    "national"
+   ],
+   "photo": "/img/gis/plov-khan.jpg",
+   "thumb": "/img/gis/plov-khan.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main5",
+   "cat": "main",
+   "name": "Казан-кебаб",
+   "desc": "Мясо, картофель, лук, зира, зелень",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main6",
+   "cat": "main",
+   "name": "Манты с фаршем",
+   "desc": "5 шт.",
+   "price": 2000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main7",
+   "cat": "main",
+   "name": "Гуйру лагман",
+   "desc": "Говядина, болгарский перец, пекинская капуста, чеснок, зелень, специи, лапша",
+   "price": 3000,
+   "tags": [
+    "hit"
+   ],
+   "photo": "/img/gis/guiru-lagman.jpg",
+   "thumb": "/img/gis/guiru-lagman.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main8",
+   "cat": "main",
+   "name": "Цомян",
+   "desc": "Говядина, свежие овощи, лапша, специи, зелень",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main9",
+   "cat": "main",
+   "name": "Динь-динь цомян",
+   "desc": "Говядина, свежие овощи, мелкая лапша, специи, острый перец",
+   "price": 3000,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main10",
+   "cat": "main",
+   "name": "Бефстроганов",
+   "desc": "Говядина, лук, сливочный соус",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main11",
+   "cat": "main",
+   "name": "Котлета по-домашнему",
+   "desc": "Говяжья котлета с гарниром",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main12",
+   "cat": "main",
+   "name": "Куриная котлета",
+   "desc": "Куриная котлета с гарниром",
+   "price": 2800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main13",
+   "cat": "main",
+   "name": "Фрикасе из курицы",
+   "desc": "Куриное филе, грибы, сливки, зелень",
+   "price": 2900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main14",
+   "cat": "main",
+   "name": "Курочка в соусе терияки",
+   "desc": "Куриное филе, брокколи, соус терияки, кунжут",
+   "price": 2900,
+   "tags": [],
+   "photo": "/img/gis/teriyaki.jpg",
+   "thumb": "/img/gis/teriyaki.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main15",
+   "cat": "main",
+   "name": "Рыба по-домашнему",
+   "desc": "Судак в кляре",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "main16",
+   "cat": "main",
+   "name": "Стейк из сёмги",
+   "desc": "Стейк сёмги, сливочный соус",
+   "price": 4500,
+   "tags": [],
+   "photo": "/img/gis/salmon.jpg",
+   "thumb": "/img/gis/salmon.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "pasta1",
+   "cat": "pasta",
+   "name": "Паста с курицей и грибами",
+   "desc": "",
+   "price": 3400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pasta2",
+   "cat": "pasta",
+   "name": "Паста с креветками",
+   "desc": "",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pasta3",
+   "cat": "pasta",
+   "name": "Паста с сёмгой",
+   "desc": "",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pizza1",
+   "cat": "pizza",
+   "name": "Пицца «Куриная»",
+   "desc": "Куриная грудка, шампиньоны, моцарелла, сливочный соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "/img/gis/pizza-tea.jpg",
+   "thumb": "/img/gis/pizza-tea.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "pizza2",
+   "cat": "pizza",
+   "name": "Пицца «Маргарита»",
+   "desc": "Томатный соус, помидоры, моцарелла",
+   "price": 3000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pizza3",
+   "cat": "pizza",
+   "name": "Пицца «Пепперони»",
+   "desc": "Колбаса халяль, шампиньоны, моцарелла, томатный соус",
+   "price": 3500,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pizza4",
+   "cat": "pizza",
+   "name": "Пицца «Сырная»",
+   "desc": "Фетакса, моцарелла, томатный соус",
+   "price": 3200,
+   "tags": [
+    "veg"
+   ],
+   "photo": "/img/gis/pizza-lemonade.jpg",
+   "thumb": "/img/gis/pizza-lemonade.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "rolls1",
+   "cat": "rolls",
+   "name": "Филадельфия",
+   "desc": "Рис, сыр, свежий огурец, лосось",
+   "price": 3800,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "rolls2",
+   "cat": "rolls",
+   "name": "Филадельфия с угрём",
+   "desc": "Рис, сыр, свежий огурец, угорь",
+   "price": 3800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "rolls3",
+   "cat": "rolls",
+   "name": "Калифорния",
+   "desc": "Рис, краб, свежий огурец, икра масаго",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "rolls4",
+   "cat": "rolls",
+   "name": "Филадельфия темпура",
+   "desc": "Сёмга, рис, сыр, огурцы, кляр, сухари",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "rolls5",
+   "cat": "rolls",
+   "name": "Хот чикен темпура",
+   "desc": "Жареный ролл: рис, сыр, жареная курица, огурцы",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "rolls6",
+   "cat": "rolls",
+   "name": "Жареный ролл с угрём",
+   "desc": "",
+   "price": 3800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake1",
+   "cat": "bake",
+   "name": "Хлебная лепёшка",
+   "desc": "",
+   "price": 350,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake2",
+   "cat": "bake",
+   "name": "Армянский лаваш",
+   "desc": "",
+   "price": 300,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake3",
+   "cat": "bake",
+   "name": "Жареные лепёшки",
+   "desc": "",
+   "price": 600,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake4",
+   "cat": "bake",
+   "name": "Хлебная корзина",
+   "desc": "Хлебная лепёшка, тонкий лаваш, чёрный хлеб",
+   "price": 1400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake5",
+   "cat": "bake",
+   "name": "Хычин с картофелем и сыром",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake6",
+   "cat": "bake",
+   "name": "Хычин с сулугуни и зеленью",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake7",
+   "cat": "bake",
+   "name": "Хычин с творогом и зеленью",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake8",
+   "cat": "bake",
+   "name": "Хачапури классический",
+   "desc": "",
+   "price": 2900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake9",
+   "cat": "bake",
+   "name": "Хачапури по-аджарски",
+   "desc": "",
+   "price": 3000,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids1",
+   "cat": "kids",
+   "name": "Наггетсы",
+   "desc": "",
+   "price": 1900,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids2",
+   "cat": "kids",
+   "name": "Сырные палочки",
+   "desc": "",
+   "price": 1700,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids3",
+   "cat": "kids",
+   "name": "Фри с кетчупом",
+   "desc": "",
+   "price": 1000,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids4",
+   "cat": "kids",
+   "name": "Пельмешки",
+   "desc": "",
+   "price": 2700,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids5",
+   "cat": "kids",
+   "name": "Чебуречки",
+   "desc": "",
+   "price": 2700,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "side1",
+   "cat": "side",
+   "name": "Рис",
+   "desc": "",
+   "price": 700,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "side2",
+   "cat": "side",
+   "name": "Картофельные дольки",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "side3",
+   "cat": "side",
+   "name": "Картофель фри",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "side4",
+   "cat": "side",
+   "name": "Картофельное пюре",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "side5",
+   "cat": "side",
+   "name": "Припущенные овощи",
+   "desc": "",
+   "price": 800,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce1",
+   "cat": "sauce",
+   "name": "Аджика",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce2",
+   "cat": "sauce",
+   "name": "Томатный",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce3",
+   "cat": "sauce",
+   "name": "Чесночный",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce4",
+   "cat": "sauce",
+   "name": "Тартар",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce5",
+   "cat": "sauce",
+   "name": "Майонез",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce6",
+   "cat": "sauce",
+   "name": "Кетчуп",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce7",
+   "cat": "sauce",
+   "name": "Сметана",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce8",
+   "cat": "sauce",
+   "name": "Сырный соус",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce9",
+   "cat": "sauce",
+   "name": "Васаби",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce10",
+   "cat": "sauce",
+   "name": "Имбирь",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce11",
+   "cat": "sauce",
+   "name": "Перец халапеньо",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea1",
+   "cat": "tea",
+   "name": "Чай чёрный",
+   "desc": "Чайник",
+   "price": 1500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea2",
+   "cat": "tea",
+   "name": "Чай зелёный",
+   "desc": "Чайник",
+   "price": 1500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea3",
+   "cat": "tea",
+   "name": "Чай жасминовый",
+   "desc": "Чайник",
+   "price": 1500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea4",
+   "cat": "tea",
+   "name": "Чай по-казахски",
+   "desc": "С молоком",
+   "price": 1900,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea5",
+   "cat": "tea",
+   "name": "Облепиховый чай",
+   "desc": "",
+   "price": 1900,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea6",
+   "cat": "tea",
+   "name": "Чай с таров",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea7",
+   "cat": "tea",
+   "name": "Ташкентский чай",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "tea8",
+   "cat": "tea",
+   "name": "Ягодный чай",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "lemonade1",
+   "cat": "lemonade",
+   "name": "Лимонад «Мохито»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "lemonade2",
+   "cat": "lemonade",
+   "name": "Лимонад «Цитрусовый»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "lemonade3",
+   "cat": "lemonade",
+   "name": "Лимонад «Ягодный»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "/img/gis/drinks.jpg",
+   "thumb": "/img/gis/drinks.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "lemonade4",
+   "cat": "lemonade",
+   "name": "Лимонад «Малиновый»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "lemonade5",
+   "cat": "lemonade",
+   "name": "Лимонад «Яблоко–киви»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "lemonade6",
+   "cat": "lemonade",
+   "name": "Лимонад «Манго–маракуйя»",
+   "desc": "1 л",
+   "price": 2200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shake1",
+   "cat": "shake",
+   "name": "Милкшейк ванильный",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shake2",
+   "cat": "shake",
+   "name": "Милкшейк шоколадный",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shake3",
+   "cat": "shake",
+   "name": "Милкшейк клубничный",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shake4",
+   "cat": "shake",
+   "name": "Милкшейк банановый",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shake5",
+   "cat": "shake",
+   "name": "Милкшейк карамельный",
+   "desc": "",
+   "price": 1900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks1",
+   "cat": "drinks",
+   "name": "Вода без газа 0,5 л",
+   "desc": "",
+   "price": 500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks2",
+   "cat": "drinks",
+   "name": "Вода без газа 1 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks3",
+   "cat": "drinks",
+   "name": "Вода с газом 0,5 л",
+   "desc": "",
+   "price": 500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks4",
+   "cat": "drinks",
+   "name": "Вода с газом 1 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks5",
+   "cat": "drinks",
+   "name": "Coca-Cola / Sprite / Fanta 1 л",
+   "desc": "",
+   "price": 1400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks6",
+   "cat": "drinks",
+   "name": "Coca-Cola ж/б 0,5 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks7",
+   "cat": "drinks",
+   "name": "Сок «Добрый» 1 л",
+   "desc": "",
+   "price": 1600,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  }
+ ],
+ "pairs": {
+  "main": [
+   "bake1",
+   "side1",
+   "tea4",
+   "lemonade1"
+  ],
+  "soup": [
+   "bake1",
+   "bake4"
+  ],
+  "pizza": [
+   "lemonade1",
+   "drinks5"
+  ],
+  "rolls": [
+   "sauce9",
+   "sauce10",
+   "lemonade6"
+  ],
+  "kids": [
+   "shake1",
+   "drinks6"
+  ],
+  "sets": [
+   "tea4",
+   "lemonade1"
+  ]
+ },
+ "gallery": [
+  {
+   "type": "reel",
+   "code": "DcVxXpmMtlb",
+   "cover": "/img/ig/DcVxXpmMtlb.jpg",
+   "caption": "Новинка — VIP-комната на 10 человек"
+  },
+  {
+   "type": "reel",
+   "code": "Dbk0dw1s1cw",
+   "cover": "/img/ig/Dbk0dw1s1cw.jpg",
+   "caption": "Обзор ресторана и адрес"
+  },
+  {
+   "type": "reel",
+   "code": "DZp5_Y0s-hx",
+   "cover": "/img/ig/DZp5_Y0s-hx.jpg",
+   "caption": "Наша команда"
+  },
+  {
+   "type": "reel",
+   "code": "DZkzJg8sToQ",
+   "cover": "/img/ig/DZkzJg8sToQ.jpg",
+   "caption": "Роллы и меню"
+  },
+  {
+   "type": "reel",
+   "code": "DZAaVKmsJTH",
+   "cover": "/img/ig/DZAaVKmsJTH.jpg",
+   "caption": "Напитки и лимонады"
+  },
+  {
+   "type": "reel",
+   "code": "DZxeDHssseN",
+   "cover": "/img/ig/DZxeDHssseN.jpg",
+   "caption": "Общительный гость"
+  },
+  {
+   "type": "reel",
+   "code": "DZ2hjTFsUxO",
+   "cover": "/img/ig/DZ2hjTFsUxO.jpg",
+   "caption": "Один день администратора"
+  },
+  {
+   "type": "reel",
+   "code": "DZfeTlUsaAr",
+   "cover": "/img/ig/DZfeTlUsaAr.jpg",
+   "caption": "«Хочу выпить лимонад» 😄"
+  },
+  {
+   "type": "reel",
+   "code": "DZ-DPs4N7sg",
+   "cover": "/img/ig/DZ-DPs4N7sg.jpg",
+   "caption": "Было такое? 😄"
+  },
+  {
+   "type": "reel",
+   "code": "DaF-4-Qs22Z",
+   "cover": "/img/ig/DaF-4-Qs22Z.jpg",
+   "caption": "POV: сотрудник отпросился"
+  },
+  {
+   "type": "reel",
+   "code": "DZaGI8dMrVp",
+   "cover": "/img/ig/DZaGI8dMrVp.jpg",
+   "caption": "Когда в детстве мечтал…"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/facade-day.jpg",
+   "thumb": "/img/gis/facade-day.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/hall-3.jpg",
+   "thumb": "/img/gis/hall-3.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/banquet-hall.jpg",
+   "thumb": "/img/gis/banquet-hall.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/shashlyk-assorti.jpg",
+   "thumb": "/img/gis/shashlyk-assorti.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/hall-fireplace.jpg",
+   "thumb": "/img/gis/hall-fireplace.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/beshbarmak.jpg",
+   "thumb": "/img/gis/beshbarmak.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/hall-2.jpg",
+   "thumb": "/img/gis/hall-2.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/plov-khan.jpg",
+   "thumb": "/img/gis/plov-khan.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/entrance.jpg",
+   "thumb": "/img/gis/entrance.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/teriyaki.jpg",
+   "thumb": "/img/gis/teriyaki.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/hall-7.jpg",
+   "thumb": "/img/gis/hall-7.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/drinks.jpg",
+   "thumb": "/img/gis/drinks.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/table-decor.jpg",
+   "thumb": "/img/gis/table-decor.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/shashlyk.jpg",
+   "thumb": "/img/gis/shashlyk.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/hall-fireplace-2.jpg",
+   "thumb": "/img/gis/hall-fireplace-2.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/guiru-lagman.jpg",
+   "thumb": "/img/gis/guiru-lagman.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/kids-zone.jpg",
+   "thumb": "/img/gis/kids-zone.sm.jpg"
+  },
+  {
+   "type": "photo",
+   "src": "/img/gis/facade-night.jpg",
+   "thumb": "/img/gis/facade-night.sm.jpg"
+  }
+ ],
+ "reviews": [
+  {
+   "id": "g270046994",
+   "name": "Medet",
+   "rating": 5,
+   "text": "Бүгін «Altyn Restaurant» да аяулы әйелімнің 30 жас мерейтойын атап өттік. 🎉 Бәрі керемет өтті! Дәмді тағамдар, әдемі атмосфера, балалар ойын аланы барлығы көңілімізден шықты. Рахмет!",
+   "created": "2026-08-19",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g268927397",
+   "name": "aennym",
+   "rating": 5,
+   "text": "Очень хорошее кафе! Всё было вкусно, красиво и приятно. Понравилась атмосфера и обслуживание, персонал вежливый и доброжелательный. Остались довольны, обязательно придём ещё! 🥰",
+   "created": "2026-08-15",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g259003632",
+   "name": "Гульнур",
+   "rating": 5,
+   "text": "Посетили новый ресторан Алтын. Хорошая атмосфера, уютный интерьер, отзывчивые официанты. Кухня тоже понравилась. Тихое место, можно и детьми придти есть небольшая игровая. Также имеются вип комнаты. Цены тоже приятные",
+   "created": "2026-07-17",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g263113479",
+   "name": "Аяулым",
+   "rating": 5,
+   "text": "Ресторан өте ұнады!Атмосферасы жайлы әрі әдемі,қызмет көрсету деңгейі жоғары.Қызметкерлері Бақытжан және Бота өте сыпайы және тапсырысты тез әкелді.Тағамдары өте дәмді.Бағасы сапасына сай.",
+   "created": "2026-07-31",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g250516242",
+   "name": "Dana",
+   "rating": 5,
+   "text": "Очень понравилось это заведение! Атмосфера уютная и приятная, интерьер продуман до мелочей всё сделано со вкусом. Это место, куда не стыдно пригласить уважаемых гостей. Порции щедрые, еда очень вкусная. Обязательно придём ещё!",
+   "created": "2026-06-16",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g264608369",
+   "name": "Дана",
+   "rating": 5,
+   "text": "Красивый интерьер, уютно, цены приемлимые, порции большие, персонал вежливый",
+   "created": "2026-08-04",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g250350387",
+   "name": "Moon",
+   "rating": 5,
+   "text": "Все было вкусно, шашлыки просто супер👍🏻 приятная атмосфера и красивый интерьер😻",
+   "created": "2026-06-15",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g250116522",
+   "name": "Мерхат",
+   "rating": 5,
+   "text": "Өте керемет мейрамхана, тағамдары дәмді, қызмет көрсету жоғары деңгейде, ішкі атмосфера керемет, көлік қоятын жеріне дейін ыңғайлы 🔥🔥🔥.",
+   "created": "2026-06-15",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g248590515",
+   "name": "Сымбат",
+   "rating": 5,
+   "text": "Всё вкусно! Официанты молодцы ! Повар знает свое дело молодец! Алема аккуратно и точно профессионально дала рекомендации по кухне!! Ей отдельное спасибо! Было вкусно!",
+   "created": "2026-06-09",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g261056022",
+   "name": "Dastan",
+   "rating": 5,
+   "text": "Өте жақсы ресторан который мен көрген, тамақтары дәмді сөз жоқ, шашлык жұмсақ өз дәміне үйлесімді болды.Просто супер советую всем👍👍👍",
+   "created": "2026-07-24",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g245884735",
+   "name": "Алтынай",
+   "rating": 5,
+   "text": "Ресторан өте ұнады! Атмосферасы жылы, жайлы – кіргеннен-ақ көңіл көтеріледі. Тамақтары өте дәмді, бәрі жаңа піскен, сапасы жоғары. Қызмет көрсету де керемет, персонал сыпайы👍👍👍",
+   "created": "2026-05-29",
+   "source": "2gis",
+   "approved": true
+  },
+  {
+   "id": "g288922896",
+   "name": "Baga",
+   "rating": 5,
+   "text": "Хорошое место,еда вкусная свежая салаты вкусные продукты свежие,мясо вкусное,шашлык вкусный сочный",
+   "created": "2026-09-02",
+   "source": "2gis",
+   "approved": true
+  }
+ ],
+ "orders": [],
+ "calls": [],
+ "bookings": []
+}
