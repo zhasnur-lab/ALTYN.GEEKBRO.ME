@@ -134,14 +134,14 @@
    "nameKk": "Сеттер мен акциялар"
   },
   {
-   "id": "salad",
-   "name": "Салаты",
-   "nameKk": "Салаттар"
-  },
-  {
    "id": "starter",
    "name": "Закуски",
    "nameKk": "Тіскебасарлар"
+  },
+  {
+   "id": "salad",
+   "name": "Салаты",
+   "nameKk": "Салаттар"
   },
   {
    "id": "soup",
@@ -154,19 +154,24 @@
    "nameKk": "Екінші тағамдар"
   },
   {
+   "id": "shashlyk",
+   "name": "Шашлыки",
+   "nameKk": "Кәуаптар"
+  },
+  {
    "id": "pasta",
    "name": "Пасты",
    "nameKk": "Пасталар"
   },
   {
-   "id": "pizza",
-   "name": "Пицца",
-   "nameKk": "Пицца"
-  },
-  {
    "id": "rolls",
    "name": "Роллы",
    "nameKk": "Роллдар"
+  },
+  {
+   "id": "pizza",
+   "name": "Пицца",
+   "nameKk": "Пицца"
   },
   {
    "id": "bake",
@@ -194,6 +199,11 @@
    "nameKk": "Шай"
   },
   {
+   "id": "drinks",
+   "name": "Вода и напитки",
+   "nameKk": "Су мен сусындар"
+  },
+  {
    "id": "lemonade",
    "name": "Лимонады",
    "nameKk": "Лимонадтар"
@@ -204,9 +214,9 @@
    "nameKk": "Милкшейктер"
   },
   {
-   "id": "drinks",
-   "name": "Вода и напитки",
-   "nameKk": "Су мен сусындар"
+   "id": "dessert",
+   "name": "Десерты",
+   "nameKk": "Десерттер"
   }
  ],
  "items": [
@@ -252,193 +262,12 @@
    "stop": false
   },
   {
-   "id": "salad1",
-   "cat": "salad",
-   "name": "Буратта с томатами",
-   "nameKk": "Қызанақ қосылған буррата",
-   "desc": "Домашняя буратта, томаты, рукола, соус песто, бальзамический соус",
-   "price": 4800,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad2",
-   "cat": "salad",
-   "name": "Каприз",
-   "nameKk": "«Каприз» салаты",
-   "desc": "Язык, яйцо варёное, свежие огурцы, голландский сыр, майонез, зелень",
-   "price": 3000,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad3",
-   "cat": "salad",
-   "name": "Язык в соусе",
-   "nameKk": "Тұздықтағы тіл",
-   "desc": "Отварной говяжий язык, болгарский перец, огурцы, зелень, соевый соус",
-   "price": 3200,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad4",
-   "cat": "salad",
-   "name": "Цезарь с курицей",
-   "nameKk": "Тауық етімен «Цезарь»",
-   "desc": "Куриная грудка, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
-   "price": 3000,
-   "tags": [
-    "hit"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad5",
-   "cat": "salad",
-   "name": "Цезарь с сёмгой",
-   "nameKk": "Албырт балығымен «Цезарь»",
-   "desc": "Сёмга, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
-   "price": 3200,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad6",
-   "cat": "salad",
-   "name": "Цезарь с креветками",
-   "nameKk": "Асшаянмен «Цезарь»",
-   "desc": "Креветки, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
-   "price": 3200,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad7",
-   "cat": "salad",
-   "name": "Тайский",
-   "nameKk": "«Тай» салаты",
-   "desc": "Говядина, помидоры, огурцы, болгарский перец, зелень, соевый соус, чеснок",
-   "price": 3200,
-   "tags": [
-    "spicy"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad8",
-   "cat": "salad",
-   "name": "Пикантный",
-   "nameKk": "«Пикантный» салаты",
-   "desc": "Говядина, шампиньоны, картофельные дольки, корнишоны, микс зелени, черри, пикантный соус",
-   "price": 3200,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad9",
-   "cat": "salad",
-   "name": "Оливье с говядиной",
-   "nameKk": "Сиыр етімен оливье",
-   "desc": "Говядина, картофель, морковь, яйцо, солёные огурцы, зелёный горошек, зелень, майонез",
-   "price": 3000,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad10",
-   "cat": "salad",
-   "name": "Азиатский",
-   "nameKk": "«Азия» салаты",
-   "desc": "Говядина, помидоры, огурцы, чеснок, початки кукурузы, зелень, соевый соус",
-   "price": 3200,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad11",
-   "cat": "salad",
-   "name": "Салат с хрустящими баклажанами",
-   "nameKk": "Қытырлақ баялды салат",
-   "desc": "Обжаренный баклажан, помидоры, рукола, творожный сыр, кисло-сладкий соус",
-   "price": 3000,
-   "tags": [
-    "veg"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad12",
-   "cat": "salad",
-   "name": "Греческий",
-   "nameKk": "«Грек» салаты",
-   "desc": "Томаты, огурцы, болгарский перец, листья салата, красный лук, фетакса, оливки, прованские травы, оливковое масло",
-   "price": 3000,
-   "tags": [
-    "veg"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad13",
-   "cat": "salad",
-   "name": "Ачучук",
-   "nameKk": "Ачучук",
-   "desc": "Помидоры, лук, соль, чёрный и красный перец, зелень",
-   "price": 2500,
-   "tags": [
-    "veg",
-    "national"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "salad14",
-   "cat": "salad",
-   "name": "Салат из свежих овощей",
-   "nameKk": "Жаңа піскен көкөніс салаты",
-   "desc": "Помидоры, огурцы, лук, зелень",
-   "price": 2500,
-   "tags": [
-    "veg"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "starter1",
    "cat": "starter",
    "name": "Национальное ассорти",
    "nameKk": "Ұлттық ассорти",
    "desc": "Жая, казы, язык",
-   "price": 9900,
+   "price": 9890,
    "tags": [
     "national"
    ],
@@ -451,8 +280,8 @@
    "cat": "starter",
    "name": "Рыбное ассорти",
    "nameKk": "Балық ассортиі",
-   "desc": "Сёмга слабосолёная, копчёная скумбрия, саварина, маслины, оливки, зелень, лимон",
-   "price": 9900,
+   "desc": "Сёмга слабосолёная, саварина, копчёная скумбрия, маслины, оливки, зелень, лимон",
+   "price": 9890,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -478,7 +307,7 @@
    "name": "Кавказское ассорти",
    "nameKk": "Кавказ ассортиі",
    "desc": "Помидоры, огурцы, болгарский перец, брынза, редис, зелень",
-   "price": 4000,
+   "price": 4500,
    "tags": [
     "veg"
    ],
@@ -492,11 +321,285 @@
    "name": "Крылышки в соусе унаги",
    "nameKk": "Унаги тұздығындағы қанаттар",
    "desc": "Куриные крылышки в кисло-сладком соусе",
-   "price": 1900,
+   "price": 2990,
    "tags": [],
    "photo": "",
    "thumb": "",
    "stop": false
+  },
+  {
+   "id": "starter6",
+   "cat": "starter",
+   "name": "Ассорти рулетиков",
+   "desc": "Пикантные рулетики из баклажанов, кабачки, фаршированные грибы",
+   "price": 6000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter7",
+   "cat": "starter",
+   "name": "Светофор",
+   "desc": "Куриный рулет, свекольный рулет, шпинатный рулет",
+   "price": 5490,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter8",
+   "cat": "starter",
+   "name": "Мясные копчёности",
+   "desc": "Копчёные конина, утка и индейка",
+   "price": 8990,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "starter9",
+   "cat": "starter",
+   "name": "Погребок",
+   "desc": "Жареная брокколи, цветная капуста в кляре, маринованные черри, маринованные шампиньоны, лук, зелень",
+   "price": 3490,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad1",
+   "cat": "salad",
+   "name": "Буратта с томатами",
+   "nameKk": "Қызанақ қосылған буррата",
+   "desc": "Домашняя буратта, томаты, рукола, соус песто, бальзамический соус",
+   "price": 4800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad15",
+   "cat": "salad",
+   "name": "Алтын",
+   "desc": "Брокколи, цветная капуста, говядина, черри, вяленые томаты, корнишоны, кисло-сладкий соус",
+   "price": 3400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad3",
+   "cat": "salad",
+   "name": "Язык в соусе",
+   "nameKk": "Тұздықтағы тіл",
+   "desc": "Отварной говяжий язык, рукола, огурцы, айсберг, перепелиные яйца, черри, соевый соус, майонез, чеснок",
+   "price": 3590,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad16",
+   "cat": "salad",
+   "name": "Тёплый салат с курицей",
+   "desc": "Курица, болгарский перец, помидоры, листья салата, красный лук, медово-горчичный соус",
+   "price": 3390,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad4",
+   "cat": "salad",
+   "name": "Цезарь с курицей",
+   "nameKk": "Тауық етімен «Цезарь»",
+   "desc": "Куриная грудка, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3000,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad5",
+   "cat": "salad",
+   "name": "Цезарь с сёмгой",
+   "nameKk": "Албырт балығымен «Цезарь»",
+   "desc": "Сёмга, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3290,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad6",
+   "cat": "salad",
+   "name": "Цезарь с креветками",
+   "nameKk": "Асшаянмен «Цезарь»",
+   "desc": "Креветки, перепелиные яйца, сухари, томаты черри, зелень, соус «Цезарь», пармезан",
+   "price": 3290,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad7",
+   "cat": "salad",
+   "name": "Тайский",
+   "nameKk": "«Тай» салаты",
+   "desc": "Говядина, помидоры, огурцы, болгарский перец, зелень, соевый соус, чеснок",
+   "price": 3200,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad8",
+   "cat": "salad",
+   "name": "Пикантный",
+   "nameKk": "«Пикантный» салаты",
+   "desc": "Говядина, шампиньоны, картофельные дольки, корнишоны, микс зелени, черри, пикантный соус",
+   "price": 3290,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad11",
+   "cat": "salad",
+   "name": "Салат с хрустящими баклажанами",
+   "nameKk": "Қытырлақ баялды салат",
+   "desc": "Обжаренный баклажан, помидоры, рукола, творожный сыр, кисло-сладкий соус",
+   "price": 3290,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad12",
+   "cat": "salad",
+   "name": "Греческий",
+   "nameKk": "«Грек» салаты",
+   "desc": "Томаты, огурцы, болгарский перец, листья салата, красный лук, фетакса, оливки, прованские травы, оливковое масло",
+   "price": 2890,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad13",
+   "cat": "salad",
+   "name": "Ачучук",
+   "nameKk": "Ачучук",
+   "desc": "Помидоры, лук, соль, чёрный и красный перец, зелень",
+   "price": 1990,
+   "tags": [
+    "veg",
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad14",
+   "cat": "salad",
+   "name": "Салат из свежих овощей",
+   "nameKk": "Жаңа піскен көкөніс салаты",
+   "desc": "Помидоры, огурцы, лук, зелень, майонез или сметана",
+   "price": 2200,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad17",
+   "cat": "salad",
+   "name": "Нежный",
+   "desc": "Микс салата, сёмга, черри, огурец, творожный сыр, кунжут, апельсиновый соус",
+   "price": 3390,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad18",
+   "cat": "salad",
+   "name": "Золотая креветка",
+   "desc": "Микс салата, креветки, черри, вяленые томаты, пармезан",
+   "price": 3390,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "salad2",
+   "cat": "salad",
+   "name": "Каприз",
+   "nameKk": "«Каприз» салаты",
+   "desc": "Язык, яйцо варёное, свежие огурцы, голландский сыр, майонез, зелень",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "salad9",
+   "cat": "salad",
+   "name": "Оливье с говядиной",
+   "nameKk": "Сиыр етімен оливье",
+   "desc": "Говядина, картофель, морковь, яйцо, солёные огурцы, зелёный горошек, зелень, майонез",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "salad10",
+   "cat": "salad",
+   "name": "Азиатский",
+   "nameKk": "«Азия» салаты",
+   "desc": "Говядина, помидоры, огурцы, чеснок, початки кукурузы, зелень, соевый соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "soup1",
@@ -591,18 +694,6 @@
    "stop": false
   },
   {
-   "id": "soup8",
-   "cat": "soup",
-   "name": "Окрошка",
-   "nameKk": "Окрошка",
-   "desc": "Картофель, огурцы, яйца, редиска, колбаса, зелень, минеральная вода",
-   "price": 2500,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "soup9",
    "cat": "soup",
    "name": "Суп с фрикадельками",
@@ -615,11 +706,24 @@
    "stop": false
   },
   {
+   "id": "soup8",
+   "cat": "soup",
+   "name": "Окрошка",
+   "nameKk": "Окрошка",
+   "desc": "Картофель, огурцы, яйца, редиска, колбаса, зелень, минеральная вода",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
    "id": "main1",
    "cat": "main",
    "name": "Бешбармак из конины",
    "nameKk": "Жылқы етінен бешбармақ",
-   "desc": "Жайма, жая, казы, картофель",
+   "desc": "Жайма, жая, казы",
    "price": 3500,
    "tags": [
     "hit",
@@ -627,34 +731,6 @@
    ],
    "photo": "/img/gis/beshbarmak.jpg",
    "thumb": "/img/gis/beshbarmak.sm.jpg",
-   "stop": false
-  },
-  {
-   "id": "main2",
-   "cat": "main",
-   "name": "Бешбармак из говядины",
-   "nameKk": "Сиыр етінен бешбармақ",
-   "desc": "Жайма, говядина, казы, картофель",
-   "price": 3500,
-   "tags": [
-    "national"
-   ],
-   "photo": "/img/gis/beshbarmak.jpg",
-   "thumb": "/img/gis/beshbarmak.sm.jpg",
-   "stop": false
-  },
-  {
-   "id": "main3",
-   "cat": "main",
-   "name": "Плов ташкентский",
-   "nameKk": "Ташкент палауы",
-   "desc": "Мясо, рис, нут, лук, морковь",
-   "price": 3500,
-   "tags": [
-    "hit"
-   ],
-   "photo": "/img/gis/plov.jpg",
-   "thumb": "/img/gis/plov.sm.jpg",
    "stop": false
   },
   {
@@ -689,7 +765,7 @@
    "name": "Манты с фаршем",
    "nameKk": "Тартылған етпен манты",
    "desc": "5 шт.",
-   "price": 2000,
+   "price": 2500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -738,34 +814,10 @@
   {
    "id": "main10",
    "cat": "main",
-   "name": "Бефстроганов",
-   "nameKk": "Бефстроганов",
-   "desc": "Говядина, лук, сливочный соус",
-   "price": 3000,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "main11",
-   "cat": "main",
-   "name": "Котлета по-домашнему",
-   "nameKk": "Үй котлеті",
-   "desc": "Говяжья котлета с гарниром",
-   "price": 3000,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "main12",
-   "cat": "main",
-   "name": "Куриная котлета",
-   "nameKk": "Тауық котлеті",
-   "desc": "Куриная котлета с гарниром",
-   "price": 2800,
+   "name": "Бефстроганов с пюре",
+   "nameKk": "Пюре қосылған бефстроганов",
+   "desc": "Говядина, лук, грибы, сливочный соус; гарнир — картофельное пюре",
+   "price": 3500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -784,24 +836,12 @@
    "stop": false
   },
   {
-   "id": "main14",
-   "cat": "main",
-   "name": "Курочка в соусе терияки",
-   "nameKk": "Терияки тұздығындағы тауық",
-   "desc": "Куриное филе, брокколи, соус терияки, кунжут",
-   "price": 2900,
-   "tags": [],
-   "photo": "/img/gis/teriyaki.jpg",
-   "thumb": "/img/gis/teriyaki.sm.jpg",
-   "stop": false
-  },
-  {
    "id": "main15",
    "cat": "main",
    "name": "Рыба по-домашнему",
    "nameKk": "Үйше пісірілген балық",
-   "desc": "Судак в кляре",
-   "price": 3200,
+   "desc": "Судак в кляре, картофель по-деревенски",
+   "price": 3500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -812,11 +852,227 @@
    "cat": "main",
    "name": "Стейк из сёмги",
    "nameKk": "Албырт балығының стейгі",
-   "desc": "Стейк сёмги, сливочный соус",
+   "desc": "Стейк сёмги, сливочный соус; гарнир — рис с овощами, припущенные овощи",
    "price": 4500,
    "tags": [],
    "photo": "/img/gis/salmon.jpg",
    "thumb": "/img/gis/salmon.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "main2",
+   "cat": "main",
+   "name": "Бешбармак из говядины",
+   "nameKk": "Сиыр етінен бешбармақ",
+   "desc": "Жайма, говядина, казы, картофель",
+   "price": 3500,
+   "tags": [
+    "national"
+   ],
+   "photo": "/img/gis/beshbarmak.jpg",
+   "thumb": "/img/gis/beshbarmak.sm.jpg",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "main3",
+   "cat": "main",
+   "name": "Плов ташкентский",
+   "nameKk": "Ташкент палауы",
+   "desc": "Мясо, рис, нут, лук, морковь",
+   "price": 3500,
+   "tags": [
+    "hit"
+   ],
+   "photo": "/img/gis/plov.jpg",
+   "thumb": "/img/gis/plov.sm.jpg",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "main11",
+   "cat": "main",
+   "name": "Котлета по-домашнему",
+   "nameKk": "Үй котлеті",
+   "desc": "Говяжья котлета с гарниром",
+   "price": 3000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "main12",
+   "cat": "main",
+   "name": "Куриная котлета",
+   "nameKk": "Тауық котлеті",
+   "desc": "Куриная котлета с гарниром",
+   "price": 2800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "main14",
+   "cat": "main",
+   "name": "Курочка в соусе терияки",
+   "nameKk": "Терияки тұздығындағы тауық",
+   "desc": "Куриное филе, брокколи, соус терияки, кунжут",
+   "price": 2900,
+   "tags": [],
+   "photo": "/img/gis/teriyaki.jpg",
+   "thumb": "/img/gis/teriyaki.sm.jpg",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "shashlyk1",
+   "cat": "shashlyk",
+   "name": "Шашлык из антрекота",
+   "desc": "",
+   "price": 3800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk2",
+   "cat": "shashlyk",
+   "name": "Шашлык из баранины",
+   "desc": "",
+   "price": 4000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk3",
+   "cat": "shashlyk",
+   "name": "Шашлык «Ханский»",
+   "desc": "",
+   "price": 4500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk4",
+   "cat": "shashlyk",
+   "name": "Шашлык из говядины",
+   "desc": "",
+   "price": 4000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk5",
+   "cat": "shashlyk",
+   "name": "Люля-кебаб",
+   "desc": "",
+   "price": 2900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk6",
+   "cat": "shashlyk",
+   "name": "Куриные крылышки на мангале",
+   "desc": "",
+   "price": 3200,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk7",
+   "cat": "shashlyk",
+   "name": "Окорочка на мангале",
+   "desc": "",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk8",
+   "cat": "shashlyk",
+   "name": "Шашлык из утки",
+   "desc": "",
+   "price": 3800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk9",
+   "cat": "shashlyk",
+   "name": "Печень в оболочке",
+   "desc": "",
+   "price": 2900,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk10",
+   "cat": "shashlyk",
+   "name": "Шампиньоны на мангале",
+   "desc": "",
+   "price": 2600,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk11",
+   "cat": "shashlyk",
+   "name": "Овощи на мангале",
+   "desc": "",
+   "price": 2600,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk12",
+   "cat": "shashlyk",
+   "name": "Ассорти шашлыков на компанию",
+   "desc": "",
+   "price": 39000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "shashlyk13",
+   "cat": "shashlyk",
+   "name": "Ассорти шашлыков (мини)",
+   "desc": "",
+   "price": 24000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
    "stop": false
   },
   {
@@ -856,60 +1112,6 @@
    "stop": false
   },
   {
-   "id": "pizza1",
-   "cat": "pizza",
-   "name": "Пицца «Куриная»",
-   "nameKk": "«Тауықты» пицца",
-   "desc": "Куриная грудка, шампиньоны, моцарелла, сливочный соус",
-   "price": 3200,
-   "tags": [],
-   "photo": "/img/gis/pizza-tea.jpg",
-   "thumb": "/img/gis/pizza-tea.sm.jpg",
-   "stop": false
-  },
-  {
-   "id": "pizza2",
-   "cat": "pizza",
-   "name": "Пицца «Маргарита»",
-   "nameKk": "«Маргарита» пиццасы",
-   "desc": "Томатный соус, помидоры, моцарелла",
-   "price": 3000,
-   "tags": [
-    "veg"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "pizza3",
-   "cat": "pizza",
-   "name": "Пицца «Пепперони»",
-   "nameKk": "«Пепперони» пиццасы",
-   "desc": "Колбаса халяль, шампиньоны, моцарелла, томатный соус",
-   "price": 3500,
-   "tags": [
-    "hit"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "pizza4",
-   "cat": "pizza",
-   "name": "Пицца «Сырная»",
-   "nameKk": "«Ірімшікті» пицца",
-   "desc": "Фетакса, моцарелла, томатный соус",
-   "price": 3200,
-   "tags": [
-    "veg"
-   ],
-   "photo": "/img/gis/pizza-lemonade.jpg",
-   "thumb": "/img/gis/pizza-lemonade.sm.jpg",
-   "stop": false
-  },
-  {
    "id": "rolls1",
    "cat": "rolls",
    "name": "Филадельфия",
@@ -930,18 +1132,6 @@
    "nameKk": "Жыланбалықты Филадельфия",
    "desc": "Рис, сыр, свежий огурец, угорь",
    "price": 3800,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "rolls3",
-   "cat": "rolls",
-   "name": "Калифорния",
-   "nameKk": "Калифорния",
-   "desc": "Рис, краб, свежий огурец, икра масаго",
-   "price": 3500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -984,6 +1174,84 @@
    "stop": false
   },
   {
+   "id": "rolls3",
+   "cat": "rolls",
+   "name": "Калифорния",
+   "nameKk": "Калифорния",
+   "desc": "Рис, краб, свежий огурец, икра масаго",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "pizza1",
+   "cat": "pizza",
+   "name": "Пицца «Куриная»",
+   "nameKk": "«Тауықты» пицца",
+   "desc": "Куриная грудка, шампиньоны, моцарелла, сливочный соус",
+   "price": 3200,
+   "tags": [],
+   "photo": "/img/gis/pizza-tea.jpg",
+   "thumb": "/img/gis/pizza-tea.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "pizza2",
+   "cat": "pizza",
+   "name": "Пицца «Маргарита»",
+   "nameKk": "«Маргарита» пиццасы",
+   "desc": "Томатный соус, помидоры, моцарелла",
+   "price": 3000,
+   "tags": [
+    "veg"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pizza3",
+   "cat": "pizza",
+   "name": "Пицца «Пепперони»",
+   "nameKk": "«Пепперони» пиццасы",
+   "desc": "Колбаса халяль, моцарелла, томатный соус",
+   "price": 3500,
+   "tags": [
+    "hit"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "pizza4",
+   "cat": "pizza",
+   "name": "Пицца «Сырная»",
+   "nameKk": "«Ірімшікті» пицца",
+   "desc": "Фетакса, моцарелла, сливочный соус",
+   "price": 3200,
+   "tags": [
+    "veg"
+   ],
+   "photo": "/img/gis/pizza-lemonade.jpg",
+   "thumb": "/img/gis/pizza-lemonade.sm.jpg",
+   "stop": false
+  },
+  {
+   "id": "pizza5",
+   "cat": "pizza",
+   "name": "Пицца «Мясная»",
+   "desc": "Копчёная конина, томатный соус, моцарелла, яйцо",
+   "price": 3800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
    "id": "bake1",
    "cat": "bake",
    "name": "Хлебная лепёшка",
@@ -1008,60 +1276,12 @@
    "stop": false
   },
   {
-   "id": "bake3",
-   "cat": "bake",
-   "name": "Жареные лепёшки",
-   "nameKk": "Қуырылған тоқаштар",
-   "desc": "",
-   "price": 600,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "bake4",
    "cat": "bake",
    "name": "Хлебная корзина",
    "nameKk": "Нан себеті",
    "desc": "Хлебная лепёшка, тонкий лаваш, чёрный хлеб",
    "price": 1400,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "bake5",
-   "cat": "bake",
-   "name": "Хычин с картофелем и сыром",
-   "nameKk": "Картоп пен ірімшік қосылған хычин",
-   "desc": "",
-   "price": 2500,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "bake6",
-   "cat": "bake",
-   "name": "Хычин с сулугуни и зеленью",
-   "nameKk": "Сулугуни мен көк қосылған хычин",
-   "desc": "",
-   "price": 2500,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "bake7",
-   "cat": "bake",
-   "name": "Хычин с творогом и зеленью",
-   "nameKk": "Сүзбе мен көк қосылған хычин",
-   "desc": "",
-   "price": 2500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -1092,6 +1312,69 @@
    "photo": "",
    "thumb": "",
    "stop": false
+  },
+  {
+   "id": "bake10",
+   "cat": "bake",
+   "name": "Хачапури по-восточному",
+   "desc": "",
+   "price": 3500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "bake3",
+   "cat": "bake",
+   "name": "Жареные лепёшки",
+   "nameKk": "Қуырылған тоқаштар",
+   "desc": "",
+   "price": 600,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "bake5",
+   "cat": "bake",
+   "name": "Хычин с картофелем и сыром",
+   "nameKk": "Картоп пен ірімшік қосылған хычин",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "bake6",
+   "cat": "bake",
+   "name": "Хычин с сулугуни и зеленью",
+   "nameKk": "Сулугуни мен көк қосылған хычин",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "bake7",
+   "cat": "bake",
+   "name": "Хычин с творогом и зеленью",
+   "nameKk": "Сүзбе мен көк қосылған хычин",
+   "desc": "",
+   "price": 2500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "kids1",
@@ -1150,6 +1433,45 @@
    "stop": false
   },
   {
+   "id": "kids6",
+   "cat": "kids",
+   "name": "Бургер куриный с фри",
+   "desc": "",
+   "price": 2500,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids7",
+   "cat": "kids",
+   "name": "Бургер говяжий с фри",
+   "desc": "",
+   "price": 2800,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "kids8",
+   "cat": "kids",
+   "name": "Сэндвич с фри",
+   "desc": "",
+   "price": 2500,
+   "tags": [
+    "kids"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
    "id": "kids5",
    "cat": "kids",
    "name": "Чебуречки",
@@ -1161,7 +1483,8 @@
    ],
    "photo": "",
    "thumb": "",
-   "stop": false
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "side1",
@@ -1250,34 +1573,10 @@
    "stop": false
   },
   {
-   "id": "sauce3",
-   "cat": "sauce",
-   "name": "Чесночный",
-   "nameKk": "Сарымсақ тұздығы",
-   "desc": "",
-   "price": 400,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "sauce4",
    "cat": "sauce",
    "name": "Тартар",
    "nameKk": "Тартар",
-   "desc": "",
-   "price": 400,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "sauce5",
-   "cat": "sauce",
-   "name": "Майонез",
-   "nameKk": "Майонез",
    "desc": "",
    "price": 400,
    "tags": [],
@@ -1298,18 +1597,6 @@
    "stop": false
   },
   {
-   "id": "sauce7",
-   "cat": "sauce",
-   "name": "Сметана",
-   "nameKk": "Қаймақ",
-   "desc": "",
-   "price": 400,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "sauce8",
    "cat": "sauce",
    "name": "Сырный соус",
@@ -1322,6 +1609,44 @@
    "stop": false
   },
   {
+   "id": "sauce7",
+   "cat": "sauce",
+   "name": "Сметана",
+   "nameKk": "Қаймақ",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "sauce3",
+   "cat": "sauce",
+   "name": "Чесночный",
+   "nameKk": "Сарымсақ тұздығы",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "sauce5",
+   "cat": "sauce",
+   "name": "Майонез",
+   "nameKk": "Майонез",
+   "desc": "",
+   "price": 400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
    "id": "sauce9",
    "cat": "sauce",
    "name": "Васаби",
@@ -1331,7 +1656,8 @@
    "tags": [],
    "photo": "",
    "thumb": "",
-   "stop": false
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "sauce10",
@@ -1343,7 +1669,8 @@
    "tags": [],
    "photo": "",
    "thumb": "",
-   "stop": false
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "sauce11",
@@ -1355,7 +1682,8 @@
    "tags": [],
    "photo": "",
    "thumb": "",
-   "stop": false
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "tea1",
@@ -1374,18 +1702,6 @@
    "cat": "tea",
    "name": "Чай зелёный",
    "nameKk": "Көк шай",
-   "desc": "Чайник",
-   "price": 1500,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "tea3",
-   "cat": "tea",
-   "name": "Чай жасминовый",
-   "nameKk": "Жасмин шайы",
    "desc": "Чайник",
    "price": 1500,
    "tags": [],
@@ -1456,6 +1772,126 @@
    "photo": "",
    "thumb": "",
    "stop": false
+  },
+  {
+   "id": "tea3",
+   "cat": "tea",
+   "name": "Чай жасминовый",
+   "nameKk": "Жасмин шайы",
+   "desc": "Чайник",
+   "price": 1500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
+  },
+  {
+   "id": "drinks1",
+   "cat": "drinks",
+   "name": "Вода без газа 0,5 л",
+   "nameKk": "Газсыз су 0,5 л",
+   "desc": "",
+   "price": 500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks2",
+   "cat": "drinks",
+   "name": "Вода без газа 1 л",
+   "nameKk": "Газсыз су 1 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks3",
+   "cat": "drinks",
+   "name": "Вода с газом 0,5 л",
+   "nameKk": "Газдалған су 0,5 л",
+   "desc": "",
+   "price": 500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks4",
+   "cat": "drinks",
+   "name": "Вода с газом 1 л",
+   "nameKk": "Газдалған су 1 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks5",
+   "cat": "drinks",
+   "name": "Coca-Cola / Sprite / Fanta 1 л",
+   "nameKk": "Coca-Cola / Sprite / Fanta 1 л",
+   "desc": "",
+   "price": 1400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks8",
+   "cat": "drinks",
+   "name": "Сок натуральный 0,2 л",
+   "desc": "",
+   "price": 500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks7",
+   "cat": "drinks",
+   "name": "Сок натуральный 1 л",
+   "nameKk": "Табиғи шырын 1 л",
+   "desc": "",
+   "price": 1600,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks9",
+   "cat": "drinks",
+   "name": "Компот",
+   "desc": "",
+   "price": 1400,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "drinks6",
+   "cat": "drinks",
+   "name": "Coca-Cola ж/б 0,5 л",
+   "nameKk": "Coca-Cola банкада 0,5 л",
+   "desc": "",
+   "price": 800,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false,
+   "hidden": true
   },
   {
    "id": "lemonade1",
@@ -1590,22 +2026,20 @@
    "stop": false
   },
   {
-   "id": "drinks1",
-   "cat": "drinks",
-   "name": "Вода без газа 0,5 л",
-   "nameKk": "Газсыз су 0,5 л",
+   "id": "dessert1",
+   "cat": "dessert",
+   "name": "Чизкейк",
    "desc": "",
-   "price": 500,
+   "price": 1300,
    "tags": [],
    "photo": "",
    "thumb": "",
    "stop": false
   },
   {
-   "id": "drinks2",
-   "cat": "drinks",
-   "name": "Вода без газа 1 л",
-   "nameKk": "Газсыз су 1 л",
+   "id": "dessert2",
+   "cat": "dessert",
+   "name": "Медовик",
    "desc": "",
    "price": 800,
    "tags": [],
@@ -1614,60 +2048,44 @@
    "stop": false
   },
   {
-   "id": "drinks3",
-   "cat": "drinks",
-   "name": "Вода с газом 0,5 л",
-   "nameKk": "Газдалған су 0,5 л",
+   "id": "dessert3",
+   "cat": "dessert",
+   "name": "Пирог",
    "desc": "",
-   "price": 500,
+   "price": 700,
    "tags": [],
    "photo": "",
    "thumb": "",
    "stop": false
   },
   {
-   "id": "drinks4",
-   "cat": "drinks",
-   "name": "Вода с газом 1 л",
-   "nameKk": "Газдалған су 1 л",
+   "id": "dessert4",
+   "cat": "dessert",
+   "name": "Пирожное «Вупи пай»",
    "desc": "",
-   "price": 800,
+   "price": 600,
    "tags": [],
    "photo": "",
    "thumb": "",
    "stop": false
   },
   {
-   "id": "drinks5",
-   "cat": "drinks",
-   "name": "Coca-Cola / Sprite / Fanta 1 л",
-   "nameKk": "Coca-Cola / Sprite / Fanta 1 л",
+   "id": "dessert5",
+   "cat": "dessert",
+   "name": "Трайфл",
    "desc": "",
-   "price": 1400,
+   "price": 1000,
    "tags": [],
    "photo": "",
    "thumb": "",
    "stop": false
   },
   {
-   "id": "drinks6",
-   "cat": "drinks",
-   "name": "Coca-Cola ж/б 0,5 л",
-   "nameKk": "Coca-Cola банкада 0,5 л",
+   "id": "dessert6",
+   "cat": "dessert",
+   "name": "Арт-десерт",
    "desc": "",
-   "price": 800,
-   "tags": [],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
-   "id": "drinks7",
-   "cat": "drinks",
-   "name": "Сок «Добрый» 1 л",
-   "nameKk": "«Добрый» шырыны 1 л",
-   "desc": "",
-   "price": 1600,
+   "price": 2400,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -1690,16 +2108,29 @@
    "drinks5"
   ],
   "rolls": [
-   "sauce9",
-   "sauce10",
-   "lemonade6"
+   "lemonade6",
+   "tea2"
   ],
   "kids": [
    "shake1",
-   "drinks6"
+   "drinks8"
   ],
   "sets": [
    "tea4",
+   "lemonade1"
+  ],
+  "shashlyk": [
+   "bake2",
+   "sauce1",
+   "salad13",
+   "lemonade1"
+  ],
+  "dessert": [
+   "tea1",
+   "tea5"
+  ],
+  "starter": [
+   "bake4",
    "lemonade1"
   ]
  },

@@ -371,7 +371,10 @@ async function api(req, res, url) {
   // Блюда — по одному (никто не затирает чужие правки и стоп-лист)
   if (p === '/api/admin/items' && m === 'POST') {
     const b = await json(req);
-    const it = { id: str(b.cat, 20).replace(/\W/g, '') + Date.now().toString(36), name: '', price: 0, tags: [], photo: '', thumb: '', stop: false, hidden: false };
+    // id можно задать (файлы меню ссылаются на постоянные id), иначе генерируем
+    const want = typeof b.id === 'string' && /^[a-z][a-z0-9_]{1,40}$/i.test(b.id) ? b.id : '';
+    if (want && db.items.some(x => x.id === want)) return send(res, 409, { error: `Позиция ${want} уже есть` });
+    const it = { id: want || str(b.cat, 20).replace(/\W/g, '') + Date.now().toString(36) + crypto.randomBytes(2).toString('hex'), name: '', price: 0, tags: [], photo: '', thumb: '', stop: false, hidden: false };
     applyItem(it, b);
     if (!it.name || !it.price) return send(res, 400, { error: 'Нужны название и цена' });
     backupBeforeEdit();
@@ -391,6 +394,15 @@ async function api(req, res, url) {
     }
     applyItem(db.items[i], await json(req)); save(); broadcast('item', db.items[i]);
     return send(res, 200, db.items[i]);
+  }
+  if (p === '/api/admin/items/order' && m === 'POST') {
+    // Полный порядок блюд (для загрузки меню из файла): только перестановка существующих id
+    const b = await json(req), ids = Array.isArray(b.ids) ? b.ids : [];
+    const cur = new Set(db.items.map(x => x.id));
+    if (ids.length !== cur.size || new Set(ids).size !== ids.length || !ids.every(x => cur.has(x))) return send(res, 409, { error: 'Список блюд изменился, порядок не применён' });
+    const rank = new Map(ids.map((x, i) => [x, i]));
+    db.items.sort((x, y) => rank.get(x.id) - rank.get(y.id)); save(); broadcast('items-order', db.items.map(x => x.id));
+    return send(res, 200, { ok: 1 });
   }
   if ((mm = /^\/api\/admin\/items\/(\w+)\/move$/.exec(p)) && m === 'POST') {
     const b = await json(req), i = db.items.findIndex(x => x.id === mm[1]); if (i < 0) return send(res, 404, {});
