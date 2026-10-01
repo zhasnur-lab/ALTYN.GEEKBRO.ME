@@ -17,6 +17,8 @@ const DB_FILE = path.join(DATA, 'db.json');
 const PORT = +process.env.PORT || 4326;
 const SECRET = process.env.SECRET || 'dev-secret';
 const PASS = { admin: process.env.ADMIN_PASS || 'admin', staff: process.env.STAFF_PASS || '1234' };
+const INBOX_TOKEN = process.env.INBOX_TOKEN || ''; // ссылка для загрузки фото/видео с телефона: /inbox?k=…
+const INBOX = path.join(DATA, 'media-inbox');
 
 for (const d of [UPL, BAK, ARCH]) fs.mkdirSync(d, { recursive: true });
 
@@ -293,6 +295,21 @@ async function api(req, res, url) {
     return send(res, 200, { ok: true });
   }
 
+  // --- приём фото/видео по секретной ссылке (оригиналы для роликов и сайта) ---
+  if (p === '/api/inbox' && m === 'POST') {
+    if (!INBOX_TOKEN || url.searchParams.get('k') !== INBOX_TOKEN) return send(res, 404, { error: 'not found' });
+    const raw = path.basename(str(url.searchParams.get('name'), 120)).replace(/[^\w.\-а-яё ]/gi, '_') || 'file';
+    if (!/\.(jpe?g|png|heic|heif|webp|mp4|mov|m4v)$/i.test(raw)) return send(res, 400, { error: 'Нужны фото или видео' });
+    fs.mkdirSync(INBOX, { recursive: true });
+    const file = path.join(INBOX, `${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}-${raw}`);
+    let n = 0; const out = fs.createWriteStream(file);
+    await new Promise((ok, fail) => {
+      req.on('data', c => { n += c.length; if (n > 600e6) { req.destroy(); fail(new Error('too big')); } });
+      req.pipe(out); out.on('finish', ok); req.on('error', fail);
+    });
+    return send(res, 200, { ok: 1, size: n });
+  }
+
   // --- staff auth ---
   if (p === '/api/login' && m === 'POST') {
     if (limited('login:' + ip, 8)) return send(res, 429, { error: 'Слишком много попыток, подождите минуту' });
@@ -487,6 +504,7 @@ const server = http.createServer(async (req, res) => {
     // SPA-маршруты: /t/12 (стол), /menu, /book …
     let rel = decodeURIComponent(url.pathname);
     if (rel === '/staff' || rel === '/staff/') return serveFile(res, path.join(PUB, 'staff/index.html'));
+    if (rel === '/inbox' && INBOX_TOKEN && url.searchParams.get('k') === INBOX_TOKEN) return serveFile(res, path.join(PUB, 'inbox.html'));
     if (/^\/(t\/[\w-]+|menu|book|halls|gallery|reviews|order)\/?$/.test(rel) || rel === '/') return serveFile(res, path.join(PUB, 'index.html'));
     const file = path.normalize(path.join(PUB, rel));
     if (!file.startsWith(PUB)) { res.writeHead(403); return res.end(); }
