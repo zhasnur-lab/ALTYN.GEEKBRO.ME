@@ -1,6 +1,7 @@
 // Генерирует seed.json — стартовые данные (меню из актуального «МЕНЮ» в Instagram @meiramhana_altyn, 2026).
 // node tools/seed.mjs  → перезаписывает seed.json (db.json не трогает).
 import fs from 'node:fs';
+import { applyMenu } from './menu-merge.mjs';
 
 const settings = {
   name: 'ALTYN', fullName: 'Ресторан «ALTYN»', tagline: 'Место для встреч и особых вечеров',
@@ -213,7 +214,11 @@ const gallery = [...reels.map(([code, caption]) => ({ type: 'reel', code, cover:
   ...photos.map(n => ({ type: 'photo', src: `/img/gis/${n}.jpg`, thumb: `/img/gis/${n}.sm.jpg` }))];
 const reviews = JSON.parse(fs.readFileSync(new URL('./gis-reviews.json', import.meta.url)));
 
-const seed = { settings, halls, categories: cats.map(([id, name, nameKk]) => ({ id, name, nameKk })), items, pairs, gallery,
+// Обновления меню поверх исходного (id исходных позиций не меняются — на них ссылается живая база)
+let menu = { categories: cats.map(([id, name, nameKk]) => ({ id, name, nameKk })), items, pairs };
+for (const f of ['menu-2026-10.json']) menu = applyMenu(menu, JSON.parse(fs.readFileSync(new URL(f, import.meta.url)))).data;
+
+const seed = { settings, halls, categories: menu.categories, items: menu.items, pairs: menu.pairs, gallery,
   reviews, orders: [], calls: [], bookings: [] };
 fs.writeFileSync(new URL('../seed.json', import.meta.url), JSON.stringify(seed, null, 1));
-console.log('items:', items.length, 'cats:', cats.length);
+console.log('items:', menu.items.length, 'cats:', menu.categories.length);
