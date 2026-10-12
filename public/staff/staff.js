@@ -71,7 +71,7 @@ document.addEventListener('visibilitychange', () => { keepAwake(); if (document.
 function renderLogin() {
   es?.close();
   $('#app').innerHTML = `<div class="login"><div class="card">
-    <div style="text-align:center;margin-bottom:10px"><img src="/img/icon.svg" width="64" height="64" style="margin:0 auto" alt=""></div>
+    <div style="text-align:center;margin-bottom:10px"><img src="/img/logo-round.svg" width="96" height="96" style="margin:0 auto" alt="Meiramhana ALTYN"></div>
     <h2 class="h2" style="text-align:center">ALTYN · персонал</h2>
     <form id="lf"><div class="fld"><label>Пароль или PIN</label><input id="pw" type="password" autocomplete="current-password" autofocus></div>
     <button class="btn btn-gold btn-block" style="margin-top:14px">Войти</button></form>

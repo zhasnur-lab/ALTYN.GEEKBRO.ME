@@ -1,5 +1,5 @@
 // ALTYN service worker: HTML/API — сеть, картинки — кэш.
-const C = 'altyn-v1';
+const C = 'altyn-v2'; // v2: новый логотип — сбросить старые картинки из кэша
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', e => {
