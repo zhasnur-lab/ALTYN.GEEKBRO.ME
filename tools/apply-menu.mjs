@@ -31,7 +31,7 @@ if (state.role !== 'admin') { console.error('Пароль не админист�
 const api = (path, method, body) => call(path, { method, body: body === undefined ? undefined : JSON.stringify(body) }, cookie).then(x => x.j);
 
 // Поля блюда, которые синхронизируем. stop (стоп-лист официантов) не трогаем никогда.
-const MENU_FIELDS = ['name', 'desc', 'price', 'oldPrice', 'cat', 'tags', 'hidden'];
+const MENU_FIELDS = ['name', 'nameKk', 'desc', 'price', 'oldPrice', 'cat', 'tags', 'hidden']; // nameKk: у старых блюд merge сохраняет текущее, у новых берёт из файла
 const ALL_FIELDS = [...MENU_FIELDS, 'nameKk', 'descKk', 'photo', 'thumb'];
 const norm = (k, v) => k === 'tags' ? JSON.stringify(v || []) : k === 'hidden' ? !!v : k === 'oldPrice' || k === 'price' ? +v || 0 : (v ?? '');
 const same = (a, b, k) => norm(k, a[k]) === norm(k, b[k]);

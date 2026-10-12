@@ -30,7 +30,7 @@ export function applyMenu(data, menu) {
     if (!cur) {
       const twin = items.find(x => !x.hidden && norm(x.name) === norm(m.name));
       if (twin) log.warn.push(`«${m.name}» уже есть под id ${twin.id} — будет дубль`);
-      const it = { id: m.id, cat: m.cat, name: m.name, desc: m.desc || '', price: m.price, tags: m.tags || [], photo: '', thumb: '', stop: false };
+      const it = { id: m.id, cat: m.cat, name: m.name, ...(m.nameKk ? { nameKk: m.nameKk } : {}), desc: m.desc || '', price: m.price, tags: m.tags || [], photo: '', thumb: '', stop: false };
       items.push(it); byId.set(it.id, it); touched.add(it.id);
       log.added.push(`${it.name} — ${it.price}`);
       continue;

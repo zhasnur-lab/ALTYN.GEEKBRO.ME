@@ -159,6 +159,11 @@
    "nameKk": "Кәуаптар"
   },
   {
+   "id": "preorder",
+   "name": "Предзаказ · за 3 часа",
+   "nameKk": "Алдын ала тапсырыс · 3 сағат бұрын"
+  },
+  {
    "id": "pasta",
    "name": "Пасты",
    "nameKk": "Пасталар"
@@ -602,6 +607,20 @@
    "hidden": true
   },
   {
+   "id": "soup6",
+   "cat": "soup",
+   "name": "Том-ям с морепродуктами",
+   "nameKk": "Теңіз өнімдерімен том-ям",
+   "desc": "Сёмга, креветки, шампиньоны, помидоры черри, лук",
+   "price": 3800,
+   "tags": [
+    "spicy"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
    "id": "soup1",
    "cat": "soup",
    "name": "Чечевичный крем-суп",
@@ -668,20 +687,6 @@
    "stop": false
   },
   {
-   "id": "soup6",
-   "cat": "soup",
-   "name": "Том-ям с морепродуктами",
-   "nameKk": "Теңіз өнімдерімен том-ям",
-   "desc": "",
-   "price": 3800,
-   "tags": [
-    "spicy"
-   ],
-   "photo": "",
-   "thumb": "",
-   "stop": false
-  },
-  {
    "id": "soup7",
    "cat": "soup",
    "name": "Рамен с говядиной",
@@ -717,6 +722,20 @@
    "thumb": "",
    "stop": false,
    "hidden": true
+  },
+  {
+   "id": "main17",
+   "cat": "main",
+   "name": "Балгын ет",
+   "nameKk": "Балғын ет",
+   "desc": "Мясо конины, картофельные шарики, домашняя сметана",
+   "price": 3800,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
   },
   {
    "id": "main1",
@@ -1070,6 +1089,186 @@
    "name": "Ассорти шашлыков (мини)",
    "desc": "",
    "price": 24000,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder1",
+   "cat": "preorder",
+   "name": "Балгын ет на 10 персон",
+   "nameKk": "Балғын ет — 10 адамға",
+   "desc": "Мясо конины, гарнир — картофельные шарики. Заказ за 3 часа",
+   "price": 34500,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder2",
+   "cat": "preorder",
+   "name": "Балгын ет на 15 персон",
+   "nameKk": "Балғын ет — 15 адамға",
+   "desc": "Мясо конины, гарнир — картофельные шарики. Заказ за 3 часа",
+   "price": 47500,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder3",
+   "cat": "preorder",
+   "name": "Бешбармак на 10 персон",
+   "nameKk": "Бешбармақ — 10 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 34500,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder4",
+   "cat": "preorder",
+   "name": "Бешбармак на 15 персон",
+   "nameKk": "Бешбармақ — 15 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 46500,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder5",
+   "cat": "preorder",
+   "name": "Сырне по-казахски на 10 персон",
+   "nameKk": "Қазақша сырне — 10 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 34950,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder6",
+   "cat": "preorder",
+   "name": "Сырне по-казахски на 15 персон",
+   "nameKk": "Қазақша сырне — 15 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 46500,
+   "tags": [
+    "national"
+   ],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder7",
+   "cat": "preorder",
+   "name": "Плов по-ташкентски на 10 персон",
+   "nameKk": "Ташкент палауы — 10 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 29500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder8",
+   "cat": "preorder",
+   "name": "Плов по-ташкентски на 15 персон",
+   "nameKk": "Ташкент палауы — 15 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 42500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder9",
+   "cat": "preorder",
+   "name": "Казан-кебаб на 10 персон",
+   "nameKk": "Қазан-кебаб — 10 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 34950,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder10",
+   "cat": "preorder",
+   "name": "Казан-кебаб на 15 персон",
+   "nameKk": "Қазан-кебаб — 15 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 46950,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder11",
+   "cat": "preorder",
+   "name": "Манты на 10 персон",
+   "nameKk": "Манты — 10 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 25500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder12",
+   "cat": "preorder",
+   "name": "Манты на 15 персон",
+   "nameKk": "Манты — 15 адамға",
+   "desc": "Заказ за 3 часа",
+   "price": 33500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder13",
+   "cat": "preorder",
+   "name": "Филе утки с овощами в тайском соусе на 10 персон",
+   "nameKk": "Тай тұздығындағы көкөніс қосылған үйрек филесі — 10 адамға",
+   "desc": "Гарнир на выбор: рис ризотто, рис припущенный или картофельные дольки. Заказ за 3 часа",
+   "price": 25500,
+   "tags": [],
+   "photo": "",
+   "thumb": "",
+   "stop": false
+  },
+  {
+   "id": "preorder14",
+   "cat": "preorder",
+   "name": "Филе утки с овощами в тайском соусе на 15 персон",
+   "nameKk": "Тай тұздығындағы көкөніс қосылған үйрек филесі — 15 адамға",
+   "desc": "Гарнир на выбор: рис ризотто, рис припущенный или картофельные дольки. Заказ за 3 часа",
+   "price": 33500,
    "tags": [],
    "photo": "",
    "thumb": "",
@@ -2131,6 +2330,12 @@
   ],
   "starter": [
    "bake4",
+   "lemonade1"
+  ],
+  "preorder": [
+   "bake4",
+   "salad13",
+   "tea4",
    "lemonade1"
   ]
  },

@@ -218,7 +218,7 @@ const reviews = JSON.parse(fs.readFileSync(new URL('./gis-reviews.json', import.
 
 // Обновления меню поверх исходного (id исходных позиций не меняются — на них ссылается живая база)
 let menu = { categories: cats.map(([id, name, nameKk]) => ({ id, name, nameKk })), items, pairs };
-for (const f of ['menu-2026-10.json']) menu = applyMenu(menu, JSON.parse(fs.readFileSync(new URL(f, import.meta.url)))).data;
+for (const f of ['menu-2026-10.json', 'menu-2026-10b.json']) menu = applyMenu(menu, JSON.parse(fs.readFileSync(new URL(f, import.meta.url)))).data;
 
 const seed = { settings, halls, categories: menu.categories, items: menu.items, pairs: menu.pairs, gallery,
   reviews, orders: [], calls: [], bookings: [] };
