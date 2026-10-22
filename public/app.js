@@ -122,10 +122,8 @@ const I = {
   burger: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
 };
 // Орнамент-логотип (мотив казахского шаңырақ-узора в круге)
-const ORN = (c = '#e3c58c') => `<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="${c}" stroke-width="2.2">
-<circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="39" stroke-width="1"/>
-${[0, 45, 90, 135].map(a => `<g transform="rotate(${a} 50 50)"><path d="M50 14c9 10 9 20 0 26-9-6-9-16 0-26zM50 86c9-10 9-20 0-26-9 6-9 16 0 26z"/><path d="M36 50h28" stroke-width="1.4"/></g>`).join('')}
-<circle cx="50" cy="50" r="7"/></g></svg>`;
+// Эмблема ресторана (орнамент из логотипа) — /img/emblem.svg
+const EMB = () => '<img src="/img/emblem.svg" alt="" aria-hidden="true">';
 
 // ---------- data ----------
 let D = null;
@@ -366,7 +364,7 @@ function openRate() {
 // ---------- page render ----------
 function header() {
   return `<header class="hdr"><div class="wrap">
-    <a class="logo" href="/" aria-label="ALTYN">${ORN()}<div><small>MEIRAMHANA</small><b>ALTYN</b></div></a>
+    <a class="logo" href="/" aria-label="Meiramhana ALTYN"><img src="/img/logo.svg" alt="Meiramhana ALTYN" width="170" height="44"></a>
     <nav class="nav" id="nav">${[['menu', '#menu'], ['halls', '#halls'], ['book', '#book'], ['gallery', '#gallery'], ['reviews', '#reviews'], ['contacts', '#contacts']].map(([k, h]) => `<a href="${h}">${t(k)}</a>`).join('')}</nav>
     <div class="hdr-actions"><div class="lang">${['ru', 'kk'].map(l => `<button data-lang="${l}" class="${LANG === l ? 'on' : ''}">${l === 'kk' ? 'ҚАЗ' : 'РУС'}</button>`).join('')}</div>
     <a class="btn btn-gold btn-sm" href="#book">${t('bookBtn')}</a></div>
@@ -401,7 +399,7 @@ function siteView() {
   const heroPhoto = s.home?.heroPhoto || D.halls[0]?.photo || '/img/gis/hall-3.jpg';
   const reviews = D.reviews || [];
   return `${header()}
-  <section class="hero"><div class="orn">${ORN()}</div><div class="wrap">
+  <section class="hero"><div class="orn">${EMB()}</div><div class="wrap">
     <div>
       <span class="eyebrow">${esc(H('eyebrow') || t('heroEyebrow'))}</span>
       <h1>ALTYN <em>${LANG === 'kk' ? 'мейрамханасы' : 'ресторан'}</em></h1>
@@ -414,7 +412,7 @@ function siteView() {
       </div>
     </div>
     <div class="hero-art"><div class="arch"><img src="${esc(heroPhoto)}" alt="Зал ресторана ALTYN" fetchpriority="high"></div>
-      <div class="ring">${ORN()}</div><div class="cap">${esc(H('heroCaption'))}</div></div>
+      <div class="ring">${EMB()}</div><div class="cap">${esc(H('heroCaption'))}</div></div>
   </div></section>
 
   <div class="quick"><div class="wrap grid">
@@ -527,7 +525,7 @@ async function submitBooking(form) {
 
 function tableView() {
   return `<div class="table-mode">
-    <header class="thdr"><div class="wrap"><a class="logo" href="/" aria-label="ALTYN">${ORN()}<div><small>MEIRAMHANA</small><b>ALTYN</b></div></a>
+    <header class="thdr"><div class="wrap"><a class="logo" href="/" aria-label="Meiramhana ALTYN"><img src="/img/logo.svg" alt="Meiramhana ALTYN" width="170" height="44"></a>
       <div class="lang" style="margin-left:auto">${['ru', 'kk'].map(l => `<button data-lang="${l}" class="${LANG === l ? 'on' : ''}">${l === 'kk' ? 'ҚАЗ' : 'РУС'}</button>`).join('')}</div>
       <span class="tbadge" style="margin-left:8px">${t('table')} ${esc(TABLE)}</span></div></header>
     <div class="twelcome"><div class="wrap"><h2>${t('welcome')}</h2><p>${t('welcomeP')}</p><div class="myorders" id="myorders"></div></div></div>
